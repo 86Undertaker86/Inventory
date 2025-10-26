@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Постачальники</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f4; }
+        h1 { color: #333; }
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #eaeaea; }
+        tr:hover { background: #f1f1f1; }
+        form { margin-top: 20px; background: white; padding: 15px; border-radius: 8px; }
+        input { margin: 5px; padding: 6px; width: 300px; }
+        button { background: #4CAF50; color: white; border: none; padding: 6px 10px; cursor: pointer; }
+        button:hover { background: #45a049; }
+        a { text-decoration: none; font-weight: bold; }
+        a.delete { color: red; }
+        a.edit { color: #0066cc; }
+        .divider { margin: 30px 0; border-top: 1px solid #ccc; }
+        .msg { padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+        .success { background: #d4edda; color: #155724; }
+        .updated { background: #d1ecf1; color: #0c5460; }
+        .deleted { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+<h1>Керування постачальниками</h1>
+
+<a href="/admin"><button type="button">⬅ Назад до адміністратора</button></a>
+
+<!-- Повідомлення -->
+<div th:if="${param.success}" class="msg success">✅ Постачальника додано!</div>
+<div th:if="${param.updated}" class="msg updated">🔄 Постачальника оновлено!</div>
+<div th:if="${param.deleted}" class="msg deleted">❌ Постачальника видалено!</div>
+
+<h2>Список постачальників</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Назва компанії</th>
+        <th>Контактна особа</th>
+        <th>Телефон</th>
+        <th>Email</th>
+        <th>Адреса</th>
+        <th>Дії</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="s : ${suppliers}">
+        <td th:text="${s.supplier_id}"></td>
+        <td th:text="${s.name_company}"></td>
+        <td th:text="${s.full_name}"></td>
+        <td th:text="${s.phone}"></td>
+        <td th:text="${s.email}"></td>
+        <td th:text="${s.address}"></td>
+        <td>
+            <a th:href="@{'/admin/suppliers/edit/' + ${s.supplier_id}}" class="edit">Редагувати</a> |
+            <a th:href="@{'/admin/suppliers/delete/' + ${s.supplier_id}}" class="delete"
+               onclick="return confirm('Видалити постачальника?');">Видалити</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="divider"></div>
+
+<!-- Форма додавання / редагування -->
+<div th:if="${editSupplier == null}">
+    <h2>Додати постачальника</h2>
+    <form th:action="@{/admin/suppliers/add}" th:object="${newSupplier}" method="post">
+        <input type="text" th:field="*{name_company}" placeholder="Назва компанії" required><br>
+        <input type="text" th:field="*{full_name}" placeholder="Контактна особа" required><br>
+        <input type="text" th:field="*{phone}" placeholder="Телефон"><br>
+        <input type="email" th:field="*{email}" placeholder="Email" required><br>
+        <input type="text" th:field="*{address}" placeholder="Адреса" required><br>
+        <button type="submit">Додати</button>
+    </form>
+</div>
+
+<div th:if="${editSupplier != null}">
+    <h2>Редагувати постачальника (ID: <span th:text="${editSupplier.supplier_id}"></span>)</h2>
+    <form th:action="@{'/admin/suppliers/update/' + ${editSupplier.supplier_id}}"
+          th:object="${editSupplier}" method="post">
+        <input type="text" th:field="*{name_company}" placeholder="Назва компанії" required><br>
+        <input type="text" th:field="*{full_name}" placeholder="Контактна особа" required><br>
+        <input type="text" th:field="*{phone}" placeholder="Телефон"><br>
+        <input type="email" th:field="*{email}" placeholder="Email" required><br>
+        <input type="text" th:field="*{address}" placeholder="Адреса" required><br>
+        <button type="submit">Оновити</button>
+    </form>
+</div>
+
+</body>
+</html>

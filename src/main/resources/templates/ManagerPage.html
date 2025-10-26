@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Менеджер складу</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form, table {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background-color: #eaeaea;
+        }
+        input, select, button {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 6px;
+            border: 1px solid #aaa;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📦 Реєстрація руху товарів</h1>
+
+<form th:action="@{/manager/add}" th:object="${movement}" method="post">
+    <!-- Вибір товару -->
+    <label>Товар:</label><br>
+    <select th:field="*{item}" required>
+        <option th:each="i : ${items}" th:value="${i}" th:text="${i.name}"></option>
+    </select>
+    <br><br>
+
+    <!-- Вибір локації (rack-level-position) -->
+    <label>Локація (стелаж / поверх / місце):</label><br>
+    <select th:field="*{location}" required>
+        <option th:each="l : ${locations}"
+                th:value="${l}"
+                th:text="${l.rack + '-' + l.level + '-' + l.position}">
+        </option>
+    </select>
+    <br><br>
+
+    <!-- Кількість -->
+    <label>Кількість:</label><br>
+    <input type="number" th:field="*{quantity}" min="1" required>
+    <br><br>
+
+    <!-- Тип руху -->
+    <label>Тип руху:</label><br>
+    <select th:field="*{movement_type}" required>
+        <option value="IN">Прихід</option>
+        <option value="OUT">Видаток</option>
+        <option value="TRANSFER">Переміщення</option>
+    </select>
+    <br><br>
+
+    <button type="submit">Зареєструвати рух</button>
+</form>
+
+<div th:if="${param.success}">
+    <p style="color:green;">✅ Операція успішно зареєстрована!</p>
+</div>
+
+<a href="/manager/items">
+    <button type="button">🛒 Керування товарами</button>
+</a>
+
+
+<h2>📋 Історія рухів товарів</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Товар</th>
+        <th>Кількість</th>
+        <th>Тип руху</th>
+        <th>Локація</th>
+        <th>Дата</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="m : ${movements}">
+        <td th:text="${m.movement_id}"></td>
+        <td th:text="${m.item.name}"></td>
+        <td th:text="${m.quantity}"></td>
+        <td th:text="${m.movement_type}"></td>
+        <td th:text="${m.location.rack + '-' + m.location.level + '-' + m.location.position}"></td>
+        <td th:text="${#temporals.format(m.date, 'yyyy-MM-dd HH:mm')}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

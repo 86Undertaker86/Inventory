@@ -1,0 +1,65 @@
+package com.CourseWork.Inventory.Controller;
+
+import com.CourseWork.Inventory.Model.StockMovement;
+import com.CourseWork.Inventory.Model.MovementType;
+import com.CourseWork.Inventory.Repository.ItemRepository;
+import com.CourseWork.Inventory.Repository.LocationRepository;
+import com.CourseWork.Inventory.Service.StockMovementService;
+import com.CourseWork.Inventory.Service.InventoryService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequestMapping("/operator")
+public class WarehouseOperatorController {
+
+    private final StockMovementService stockMovementService;
+    private final InventoryService inventoryService;
+    private final ItemRepository itemRepo;
+    private final LocationRepository locationRepo;
+
+    public WarehouseOperatorController(StockMovementService stockMovementService,
+                                       InventoryService inventoryService,
+                                       ItemRepository itemRepo,
+                                       LocationRepository locationRepo) {
+        this.stockMovementService = stockMovementService;
+        this.inventoryService = inventoryService;
+        this.itemRepo = itemRepo;
+        this.locationRepo = locationRepo;
+    }
+
+    // 📦 Головна сторінка комірника
+    @GetMapping
+    public String showOperatorPage(Model model) {
+        model.addAttribute("movement", new StockMovement());
+        model.addAttribute("items", itemRepo.findAll());
+        model.addAttribute("locations", locationRepo.findAll());
+        model.addAttribute("movements", stockMovementService.getAllMovements());
+        return "OperatorPage";
+    }
+
+    // 🔁 Реєстрація руху товару (оприбуткування або списання)
+    @PostMapping("/add")
+    public String addMovement(@ModelAttribute("movement") StockMovement movement,
+                              @RequestParam("item") Integer itemId,
+                              @RequestParam("location") Integer locationId) {
+
+        var item = itemRepo.findById(itemId).orElse(null);
+        var location = locationRepo.findById(locationId).orElse(null);
+
+        movement.setItem(item);
+        movement.setLocation(location);
+
+        stockMovementService.saveMovement(movement);
+
+        // ✅ Передаємо об'єкти, а не лише ID
+        if (movement.getMovement_type() == MovementType.IN) {
+            inventoryService.updateQuantity(item, location, movement.getQuantity());
+        } else if (movement.getMovement_type() == MovementType.OUT) {
+            inventoryService.updateQuantity(item, location, -movement.getQuantity());
+        }
+
+        return "redirect:/operator?success";
+    }
+}
