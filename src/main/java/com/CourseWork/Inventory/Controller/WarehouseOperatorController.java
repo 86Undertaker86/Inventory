@@ -55,9 +55,9 @@ public class WarehouseOperatorController {
 
         // ✅ Передаємо об'єкти, а не лише ID
         if (movement.getMovement_type() == MovementType.IN) {
-            inventoryService.updateQuantity(item, location, movement.getQuantity());
+            inventoryService.saveInventory(item, location, movement.getQuantity());
         } else if (movement.getMovement_type() == MovementType.OUT) {
-            inventoryService.updateQuantity(item, location, -movement.getQuantity());
+            inventoryService.saveInventory(item, location, -movement.getQuantity());
         }
 
         return "redirect:/operator?success";

@@ -25,16 +25,7 @@ public class InventoryService {
         return inventoryRepository.findById(id).orElse(null);
     }
 
-    public void saveInventory(Inventory inventory) {
-        inventoryRepository.save(inventory);
-    }
-
-    public void deleteInventory(Integer id) {
-        inventoryRepository.deleteById(id);
-    }
-
-    // 🔧 Оновлення залишків з урахуванням item і location
-    public void updateQuantity(Item item, Location location, int deltaQuantity) {
+    public void saveInventory(Item item, Location location, int deltaQuantity) {
         Inventory inventory = inventoryRepository.findAll().stream()
                 .filter(inv -> inv.getItem().getItem_id().equals(item.getItem_id())
                         && inv.getLocation().getLocation_id().equals(location.getLocation_id()))
@@ -51,5 +42,9 @@ public class InventoryService {
         }
 
         inventoryRepository.save(inventory);
+    }
+
+    public void deleteInventory(Integer id) {
+        inventoryRepository.deleteById(id);
     }
 }
