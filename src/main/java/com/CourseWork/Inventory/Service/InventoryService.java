@@ -23,10 +23,6 @@ public class InventoryService {
         return inventoryRepository.findAll();
     }
 
-    public Inventory getInventoryById(Integer id) {
-        return inventoryRepository.findById(id).orElse(null);
-    }
-
     /**
      * Оновлює кількість товару на локації:
      *  - додає при IN,
@@ -41,69 +37,58 @@ public class InventoryService {
             throw new IllegalArgumentException("Помилка: товар або локація не знайдені.");
         }
 
-        // Знайдемо конкретний запис для цієї пари item+location (якщо є)
-        Optional<Inventory> optExact = inventoryRepository.findAll().stream()
-                .filter(inv -> inv.getItem().getItem_id().equals(item.getItem_id())
-                        && inv.getLocation().getLocation_id().equals(location.getLocation_id()))
-                .findFirst();
+        // Пошук існуючих записів
+        Optional<Inventory> sameSlot = inventoryRepository.findByLocation(location);
+        Optional<Inventory> exactMatch = inventoryRepository.findByItemAndLocation(item, location);
 
-        // Знайдемо будь-який запис, який займає цю локацію (незалежно від товару)
-        Optional<Inventory> optByLocation = inventoryRepository.findAll().stream()
-                .filter(inv -> inv.getLocation().getLocation_id().equals(location.getLocation_id()))
-                .findFirst();
-
-        // Якщо на локації є інший товар (і це не той самий item)
-        if (optByLocation.isPresent() && optByLocation.get().getItem() != null
-                && !optByLocation.get().getItem().getItem_id().equals(item.getItem_id())) {
-
-            // Дозволяємо доступ тільки якщо це саме збільшення для того самого товару (optExact present)
-            // але оскільки optByLocation містить інший товар — навіть IN заборонено
-            throw new IllegalArgumentException(String.format(
-                    "Помилка: на локації %s-%s-%s вже знаходиться товар '%s'. Неможливо додати '%s' в ту саму комірку.",
-                    location.getRack(), location.getLevel(), location.getPosition(),
-                    optByLocation.get().getItem().getName(),
-                    item.getName()
-            ));
+        // 🔒 Перевірка: чи не зайнята комірка іншим товаром
+        if (sameSlot.isPresent() && exactMatch.isEmpty()) {
+            Inventory existing = sameSlot.get();
+            if (!existing.getItem().getItem_id().equals(item.getItem_id())) {
+                throw new IllegalArgumentException(String.format(
+                        "Помилка: комірка %s-%s-%s вже містить товар '%s'. Неможливо додати '%s' в цю комірку.",
+                        location.getRack(), location.getLevel(), location.getPosition(),
+                        existing.getItem().getName(), item.getName()
+                ));
+            }
         }
 
-        // Тепер опрацьовуємо точний запис (якщо існує) або створюємо новий (тільки якщо deltaQuantity > 0)
-        if (optExact.isPresent()) {
-            Inventory inventory = optExact.get();
-            int current = inventory.getQuantity();
+        // 🔁 Якщо запис уже існує — оновлюємо кількість
+        if (exactMatch.isPresent()) {
+            Inventory inv = exactMatch.get();
+            int current = inv.getQuantity();
             int newQuantity = current + deltaQuantity;
 
-            // Якщо намагаємось списати більше, ніж є
             if (deltaQuantity < 0 && Math.abs(deltaQuantity) > current) {
                 throw new IllegalArgumentException(String.format(
                         "Помилка: не можна списати %d одиниць товару '%s' зі стелажа %s-%s-%s — доступно лише %d.",
                         Math.abs(deltaQuantity), item.getName(),
                         location.getRack(), location.getLevel(), location.getPosition(),
-                        current));
+                        current
+                ));
             }
 
-            // Якщо кількість стає <= 0 — видаляємо запис
             if (newQuantity <= 0) {
-                inventoryRepository.delete(inventory);
-                return;
-            }
-
-            inventory.setQuantity(newQuantity);
-            inventoryRepository.save(inventory);
-        } else {
-            // optExact відсутній — запису для цього item+location немає
-            if (deltaQuantity > 0) {
-                // Ми вже переконались вище, що на локації немає іншого товару (optByLocation absent)
-                Inventory inventory = new Inventory();
-                inventory.setItem(item);
-                inventory.setLocation(location);
-                inventory.setQuantity(deltaQuantity);
-                inventoryRepository.save(inventory);
+                inventoryRepository.delete(inv);
             } else {
-                // OUT при відсутньому записі — помилка
-                throw new IllegalArgumentException(String.format(
-                        "Помилка: не можна списати товар '%s' зі стелажа %s-%s-%s — він відсутній у комірці.",
-                        item.getName(), location.getRack(), location.getLevel(), location.getPosition()));
+                inv.setQuantity(newQuantity);
+                inventoryRepository.save(inv);
             }
+            return;
+        }
+
+        // 🆕 Якщо запису немає і deltaQuantity > 0 — створюємо
+        if (deltaQuantity > 0) {
+            Inventory inv = new Inventory();
+            inv.setItem(item);
+            inv.setLocation(location);
+            inv.setQuantity(deltaQuantity);
+            inventoryRepository.save(inv);
+        } else {
+            throw new IllegalArgumentException(String.format(
+                    "Помилка: не можна списати товар '%s' зі стелажа %s-%s-%s — він відсутній у комірці.",
+                    item.getName(), location.getRack(), location.getLevel(), location.getPosition()
+            ));
         }
     }
 
@@ -116,40 +101,43 @@ public class InventoryService {
         if (item == null || fromLocation == null || toLocation == null) {
             throw new IllegalArgumentException("Помилка: товар або локації не знайдені.");
         }
+
         if (quantity <= 0) {
             throw new IllegalArgumentException("Помилка: кількість для переміщення повинна бути більшою за нуль.");
         }
 
-        // Перевірка наявності у джерелі
-        Optional<Inventory> optFrom = inventoryRepository.findAll().stream()
-                .filter(inv -> inv.getItem().getItem_id().equals(item.getItem_id())
-                        && inv.getLocation().getLocation_id().equals(fromLocation.getLocation_id()))
-                .findFirst();
+        // 1️⃣ Перевірка джерела (fromLocation)
+        Inventory fromInv = inventoryRepository.findByItemAndLocation(item, fromLocation)
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                        "Помилка: у комірці %s-%s-%s немає товару '%s'.",
+                        fromLocation.getRack(), fromLocation.getLevel(), fromLocation.getPosition(),
+                        item.getName()
+                )));
 
-        if (optFrom.isEmpty() || optFrom.get().getQuantity() < quantity) {
+        if (fromInv.getQuantity() < quantity) {
             throw new IllegalArgumentException(String.format(
                     "Помилка: не можна перемістити %d одиниць товару '%s' зі стелажа %s-%s-%s — доступно лише %d.",
                     quantity, item.getName(),
                     fromLocation.getRack(), fromLocation.getLevel(), fromLocation.getPosition(),
-                    optFrom.map(Inventory::getQuantity).orElse(0)));
+                    fromInv.getQuantity()
+            ));
         }
 
-        // Перевірка цільової локації: чи є там інший товар?
-        Optional<Inventory> optToByLocation = inventoryRepository.findAll().stream()
-                .filter(inv -> inv.getLocation().getLocation_id().equals(toLocation.getLocation_id()))
-                .findFirst();
+        // 2️⃣ Перевірка цільової комірки (toLocation)
+        Optional<Inventory> toSlot = inventoryRepository.findByLocation(toLocation);
 
-        if (optToByLocation.isPresent()) {
-            Inventory toInv = optToByLocation.get();
+        if (toSlot.isPresent()) {
+            Inventory toInv = toSlot.get();
             if (!toInv.getItem().getItem_id().equals(item.getItem_id())) {
                 throw new IllegalArgumentException(String.format(
-                        "Помилка: комірка %s-%s-%s уже містить інший товар ('%s'). Неможливо перемістити '%s'.",
+                        "Помилка: комірка %s-%s-%s вже містить інший товар ('%s'). Неможливо перемістити '%s'.",
                         toLocation.getRack(), toLocation.getLevel(), toLocation.getPosition(),
-                        toInv.getItem().getName(), item.getName()));
+                        toInv.getItem().getName(), item.getName()
+                ));
             }
         }
 
-        // Виконуємо переміщення: списуємо з from, додаємо до to
+        // 3️⃣ Виконуємо переміщення атомарно
         saveInventory(item, fromLocation, -quantity);
         saveInventory(item, toLocation, quantity);
     }
