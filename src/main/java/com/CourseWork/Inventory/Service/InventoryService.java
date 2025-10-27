@@ -33,6 +33,7 @@ public class InventoryService {
      *  - видаляє, якщо кількість стає 0,
      *  - кидає помилку, якщо OUT > наявної кількості.
      */
+    // 🔁 Оприбуткування / списання / переміщення
     @Transactional
     public void saveInventory(Item item, Location location, int deltaQuantity) {
         Inventory inventory = inventoryRepository.findAll().stream()
@@ -41,47 +42,80 @@ public class InventoryService {
                 .findFirst()
                 .orElse(null);
 
-        // Якщо запис існує
         if (inventory != null) {
             int current = inventory.getQuantity();
             int newQuantity = current + deltaQuantity;
 
-            // ❌ Якщо намагаємось списати більше, ніж є
             if (deltaQuantity < 0 && Math.abs(deltaQuantity) > current) {
-                throw new IllegalArgumentException(
-                        String.format("Помилка: не можна списати %d одиниць товару '%s' зі стелажа %s-%s-%s — доступно лише %d.",
-                                Math.abs(deltaQuantity),
-                                item.getName(),
-                                location.getRack(), location.getLevel(), location.getPosition(),
-                                current)
-                );
+                throw new IllegalArgumentException(String.format(
+                        "Помилка: не можна списати %d одиниць товару '%s' зі стелажа %s-%s-%s — доступно лише %d.",
+                        Math.abs(deltaQuantity), item.getName(),
+                        location.getRack(), location.getLevel(), location.getPosition(),
+                        current));
             }
 
-            // 🗑️ Якщо кількість стає 0 — видаляємо запис
             if (newQuantity <= 0) {
                 inventoryRepository.delete(inventory);
                 return;
             }
 
-            // 🔄 Оновлення кількості
             inventory.setQuantity(newQuantity);
             inventoryRepository.save(inventory);
-        }
-        // Якщо запису нема, але це IN — створюємо
-        else if (deltaQuantity > 0) {
+        } else if (deltaQuantity > 0) {
             inventory = new Inventory();
             inventory.setItem(item);
             inventory.setLocation(location);
             inventory.setQuantity(deltaQuantity);
             inventoryRepository.save(inventory);
+        } else {
+            throw new IllegalArgumentException(String.format(
+                    "Помилка: не можна списати товар '%s' зі стелажа %s-%s-%s — він відсутній у комірці.",
+                    item.getName(),
+                    location.getRack(), location.getLevel(), location.getPosition()));
         }
-        // Якщо запису нема, а це OUT — помилка
-        else {
-            throw new IllegalArgumentException(
-                    String.format("Помилка: не можна списати товар '%s' зі стелажа %s-%s-%s — він відсутній у комірці.",
-                            item.getName(),
-                            location.getRack(), location.getLevel(), location.getPosition())
-            );
+    }
+
+    // 🚚 Переміщення між двома локаціями
+    @Transactional
+    public void transferInventory(Item item, Location fromLocation, Location toLocation, int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Помилка: кількість для переміщення повинна бути більшою за нуль.");
         }
+
+        // 1️⃣ Отримуємо залишок у джерелі
+        Inventory fromInv = inventoryRepository.findAll().stream()
+                .filter(inv -> inv.getItem().getItem_id().equals(item.getItem_id())
+                        && inv.getLocation().getLocation_id().equals(fromLocation.getLocation_id()))
+                .findFirst()
+                .orElse(null);
+
+        if (fromInv == null || fromInv.getQuantity() < quantity) {
+            throw new IllegalArgumentException(String.format(
+                    "Помилка: не можна перемістити %d одиниць товару '%s' зі стелажа %s-%s-%s — доступно лише %d.",
+                    quantity, item.getName(),
+                    fromLocation.getRack(), fromLocation.getLevel(), fromLocation.getPosition(),
+                    fromInv == null ? 0 : fromInv.getQuantity()));
+        }
+
+        // 2️⃣ Перевіряємо цільову комірку
+        Inventory toInv = inventoryRepository.findAll().stream()
+                .filter(inv -> inv.getLocation().getLocation_id().equals(toLocation.getLocation_id()))
+                .findFirst()
+                .orElse(null);
+
+        // Якщо цільова комірка вже зайнята іншим товаром
+        if (toInv != null && !toInv.getItem().getItem_id().equals(item.getItem_id())) {
+            throw new IllegalArgumentException(String.format(
+                    "Помилка: комірка %s-%s-%s вже містить інший товар ('%s'). " +
+                            "Неможливо перемістити '%s'.",
+                    toLocation.getRack(), toLocation.getLevel(), toLocation.getPosition(),
+                    toInv.getItem().getName(), item.getName()));
+        }
+
+        // 3️⃣ Віднімаємо у джерелі
+        saveInventory(item, fromLocation, -quantity);
+
+        // 4️⃣ Додаємо в ціль
+        saveInventory(item, toLocation, quantity);
     }
 }

@@ -56,21 +56,40 @@
         <option th:each="i : ${items}" th:value="${i.item_id}" th:text="${i.name}"></option>
     </select><br><br>
 
-    <label>Локація (стелаж / рівень / полиця):</label><br>
-    <select th:field="*{location}" required>
-        <option th:each="l : ${locations}"
-                th:value="${l.location_id}"
-                th:text="${l.rack + '-' + l.level + '-' + l.position}"></option>
+    <label>Тип руху:</label><br>
+    <select name="movement_type" th:field="*{movement_type}" required>
+        <option value="IN">Прихід (оприбуткування)</option>
+        <option value="OUT">Видаток (списання)</option>
+        <option value="TRANSFER">Переміщення</option>
     </select><br><br>
+
+    <!-- ✅ ПОЛЯ ДЛЯ ПЕРЕМІЩЕННЯ -->
+    <div id="transferFields" style="display:none;">
+        <label>Звідки перемістити:</label><br>
+        <select name="fromLocation" required>
+            <option th:each="loc : ${locations}" th:value="${loc.location_id}"
+                    th:text="${loc.rack + '-' + loc.level + '-' + loc.position}"></option>
+        </select><br><br>
+
+        <label>Куди перемістити:</label><br>
+        <select name="toLocation" required>
+            <option th:each="loc : ${locations}" th:value="${loc.location_id}"
+                    th:text="${loc.rack + '-' + loc.level + '-' + loc.position}"></option>
+        </select><br><br>
+    </div>
+
+    <!-- ✅ ЛОКАЦІЯ ДЛЯ IN/OUT -->
+    <div id="singleLocation">
+        <label>Локація (стелаж / рівень / полиця):</label><br>
+        <select name="location" required>
+            <option th:each="l : ${locations}"
+                    th:value="${l.location_id}"
+                    th:text="${l.rack + '-' + l.level + '-' + l.position}"></option>
+        </select><br><br>
+    </div>
 
     <label>Кількість:</label><br>
     <input type="number" th:field="*{quantity}" min="1" required><br><br>
-
-    <label>Тип руху:</label><br>
-    <select th:field="*{movement_type}" required>
-        <option value="IN">Прихід (оприбуткування)</option>
-        <option value="OUT">Видаток (списання)</option>
-    </select><br><br>
 
     <button type="submit">Зареєструвати</button>
 </form>
@@ -78,7 +97,6 @@
 <div th:if="${error}" style="background:#f8d7da; color:#721c24; padding:10px; border-radius:5px; margin-bottom:15px;">
     ⚠️ <span th:text="${error}"></span>
 </div>
-
 
 <h2>Історія рухів</h2>
 <table>
@@ -103,6 +121,26 @@
     </tr>
     </tbody>
 </table>
+
+<!-- ✅ JS У НИЗУ, після DOM -->
+<script>
+    const typeSelect = document.querySelector("[name='movement_type']");
+    const transferFields = document.getElementById("transferFields");
+    const singleLocation = document.getElementById("singleLocation");
+
+    function updateVisibility() {
+        if (typeSelect.value === "TRANSFER") {
+            transferFields.style.display = "block";
+            singleLocation.style.display = "none";
+        } else {
+            transferFields.style.display = "none";
+            singleLocation.style.display = "block";
+        }
+    }
+
+    typeSelect.addEventListener("change", updateVisibility);
+    updateVisibility(); // запуск при завантаженні
+</script>
 
 </body>
 </html>

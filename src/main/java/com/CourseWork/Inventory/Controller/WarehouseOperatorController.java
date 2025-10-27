@@ -43,30 +43,39 @@ public class WarehouseOperatorController {
     @PostMapping("/add")
     public String addMovement(@ModelAttribute("movement") StockMovement movement,
                               @RequestParam("item") Integer itemId,
-                              @RequestParam("location") Integer locationId,
+                              @RequestParam(value = "fromLocation", required = false) Integer fromId,
+                              @RequestParam(value = "toLocation", required = false) Integer toId,
+                              @RequestParam(value = "location", required = false) Integer singleLocationId,
                               Model model) {
 
         var item = itemRepo.findById(itemId).orElse(null);
-        var location = locationRepo.findById(locationId).orElse(null);
-
-        movement.setItem(item);
-        movement.setLocation(location);
 
         try {
-            // ⚙️ Спочатку оновлюємо залишки
-            if (movement.getMovement_type() == MovementType.IN) {
-                inventoryService.saveInventory(item, location, movement.getQuantity());
-            } else if (movement.getMovement_type() == MovementType.OUT) {
-                inventoryService.saveInventory(item, location, -movement.getQuantity());
+            if (movement.getMovement_type() == MovementType.IN || movement.getMovement_type() == MovementType.OUT) {
+                var location = locationRepo.findById(singleLocationId).orElse(null);
+                movement.setItem(item);
+                movement.setLocation(location);
+
+                if (movement.getMovement_type() == MovementType.IN) {
+                    inventoryService.saveInventory(item, location, movement.getQuantity());
+                } else {
+                    inventoryService.saveInventory(item, location, -movement.getQuantity());
+                }
+            } else if (movement.getMovement_type() == MovementType.TRANSFER) {
+                var fromLocation = locationRepo.findById(fromId).orElse(null);
+                var toLocation = locationRepo.findById(toId).orElse(null);
+
+                // Виконуємо переміщення
+                inventoryService.transferInventory(item, fromLocation, toLocation, movement.getQuantity());
+
+                // Можна записати у історію рухів (за бажанням)
+                movement.setLocation(toLocation);
             }
 
-            // ✅ Якщо все пройшло без помилок — зберігаємо запис у історію рухів
             stockMovementService.saveMovement(movement);
-
             return "redirect:/operator?success";
 
         } catch (IllegalArgumentException e) {
-            // ⚠️ Виводимо помилку на сторінці без додавання руху в історію
             model.addAttribute("error", e.getMessage());
             model.addAttribute("movement", new StockMovement());
             model.addAttribute("items", itemRepo.findAll());
