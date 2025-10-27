@@ -22,8 +22,8 @@ public class SupplierService {
         return supplierRepo.findById(id).orElse(null);
     }
 
-    public Supplier saveSupplier(Supplier supplier) {
-        return supplierRepo.save(supplier);
+    public void saveSupplier(Supplier supplier) {
+        supplierRepo.save(supplier);
     }
 
     public void deleteSupplier(Integer id) {
