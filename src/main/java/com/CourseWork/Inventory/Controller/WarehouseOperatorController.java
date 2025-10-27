@@ -1,7 +1,7 @@
 package com.CourseWork.Inventory.Controller;
 
-import com.CourseWork.Inventory.Model.MovementType;
 import com.CourseWork.Inventory.Model.StockMovement;
+import com.CourseWork.Inventory.Service.WarehouseOperatorService;
 import com.CourseWork.Inventory.Repository.ItemRepository;
 import com.CourseWork.Inventory.Repository.LocationRepository;
 import com.CourseWork.Inventory.Service.InventoryService;
@@ -14,19 +14,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/operator")
 public class WarehouseOperatorController {
 
-    private final StockMovementService stockMovementService;
-    private final InventoryService inventoryService;
+    private final WarehouseOperatorService operatorService;
     private final ItemRepository itemRepo;
     private final LocationRepository locationRepo;
+    private final StockMovementService stockMovementService;
+    private final InventoryService inventoryService;
 
-    public WarehouseOperatorController(StockMovementService stockMovementService,
-                                       InventoryService inventoryService,
+    public WarehouseOperatorController(WarehouseOperatorService operatorService,
                                        ItemRepository itemRepo,
-                                       LocationRepository locationRepo) {
-        this.stockMovementService = stockMovementService;
-        this.inventoryService = inventoryService;
+                                       LocationRepository locationRepo,
+                                       StockMovementService stockMovementService,
+                                       InventoryService inventoryService) {
+        this.operatorService = operatorService;
         this.itemRepo = itemRepo;
         this.locationRepo = locationRepo;
+        this.stockMovementService = stockMovementService;
+        this.inventoryService = inventoryService;
     }
 
     // 📦 Головна сторінка комірника
@@ -39,7 +42,7 @@ public class WarehouseOperatorController {
         return "OperatorPage";
     }
 
-    // 🔁 Реєстрація руху товару (оприбуткування або списання)
+    // 🔁 Реєстрація руху товару
     @PostMapping("/add")
     public String addMovement(@ModelAttribute("movement") StockMovement movement,
                               @RequestParam("item") Integer itemId,
@@ -47,34 +50,9 @@ public class WarehouseOperatorController {
                               @RequestParam(value = "toLocation", required = false) Integer toId,
                               @RequestParam(value = "location", required = false) Integer singleLocationId,
                               Model model) {
-
-        var item = itemRepo.findById(itemId).orElse(null);
-
         try {
-            if (movement.getMovement_type() == MovementType.IN || movement.getMovement_type() == MovementType.OUT) {
-                var location = locationRepo.findById(singleLocationId).orElse(null);
-                movement.setItem(item);
-                movement.setLocation(location);
-
-                if (movement.getMovement_type() == MovementType.IN) {
-                    inventoryService.saveInventory(item, location, movement.getQuantity());
-                } else {
-                    inventoryService.saveInventory(item, location, -movement.getQuantity());
-                }
-            } else if (movement.getMovement_type() == MovementType.TRANSFER) {
-                var fromLocation = locationRepo.findById(fromId).orElse(null);
-                var toLocation = locationRepo.findById(toId).orElse(null);
-
-                // Виконуємо переміщення
-                inventoryService.transferInventory(item, fromLocation, toLocation, movement.getQuantity());
-
-                // Можна записати у історію рухів (за бажанням)
-                movement.setLocation(toLocation);
-            }
-
-            stockMovementService.saveMovement(movement);
+            operatorService.processMovement(movement, itemId, fromId, toId, singleLocationId);
             return "redirect:/operator?success";
-
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("movement", new StockMovement());
@@ -85,6 +63,7 @@ public class WarehouseOperatorController {
         }
     }
 
+    // 🧾 Перегляд залишків
     @GetMapping("/inventory")
     public String viewInventory(Model model) {
         model.addAttribute("inventories", inventoryService.getAllInventories());

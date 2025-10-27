@@ -1,24 +1,78 @@
 package com.CourseWork.Inventory.Service;
 
+import com.CourseWork.Inventory.Model.Item;
+import com.CourseWork.Inventory.Model.Location;
+import com.CourseWork.Inventory.Model.MovementType;
 import com.CourseWork.Inventory.Model.StockMovement;
-import com.CourseWork.Inventory.Repository.StockMovementRepository;
+import com.CourseWork.Inventory.Repository.ItemRepository;
+import com.CourseWork.Inventory.Repository.LocationRepository;
 import org.springframework.stereotype.Service;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class WarehouseOperatorService {
 
-    private final StockMovementRepository movementRepo;
+    private final StockMovementService stockMovementService;
+    private final InventoryService inventoryService;
+    private final ItemRepository itemRepo;
+    private final LocationRepository locationRepo;
 
-    public WarehouseOperatorService(StockMovementRepository movementRepo) {
-        this.movementRepo = movementRepo;
+    public WarehouseOperatorService(StockMovementService stockMovementService,
+                                    InventoryService inventoryService,
+                                    ItemRepository itemRepo,
+                                    LocationRepository locationRepo) {
+        this.stockMovementService = stockMovementService;
+        this.inventoryService = inventoryService;
+        this.itemRepo = itemRepo;
+        this.locationRepo = locationRepo;
     }
 
-    public void recordMovement(StockMovement movement) {
-        movementRepo.save(movement);
-    }
+    /**
+     * Основна бізнес-логіка для обробки рухів товарів
+     */
+    @Transactional
+    public void processMovement(StockMovement movement,
+                                Integer itemId,
+                                Integer fromId,
+                                Integer toId,
+                                Integer singleLocationId) {
 
-    public List<StockMovement> getAllMovements() {
-        return movementRepo.findAll();
+        Item item = itemRepo.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("Помилка: товар не знайдено."));
+
+        MovementType type = movement.getMovement_type();
+
+        switch (type) {
+            case IN -> {
+                Location location = locationRepo.findById(singleLocationId)
+                        .orElseThrow(() -> new IllegalArgumentException("Помилка: локацію не знайдено."));
+                movement.setItem(item);
+                movement.setLocation(location);
+                inventoryService.saveInventory(item, location, movement.getQuantity());
+            }
+
+            case OUT -> {
+                Location location = locationRepo.findById(singleLocationId)
+                        .orElseThrow(() -> new IllegalArgumentException("Помилка: локацію не знайдено."));
+                movement.setItem(item);
+                movement.setLocation(location);
+                inventoryService.saveInventory(item, location, -movement.getQuantity());
+            }
+
+            case TRANSFER -> {
+                Location fromLocation = locationRepo.findById(fromId)
+                        .orElseThrow(() -> new IllegalArgumentException("Помилка: вихідну локацію не знайдено."));
+                Location toLocation = locationRepo.findById(toId)
+                        .orElseThrow(() -> new IllegalArgumentException("Помилка: цільову локацію не знайдено."));
+                inventoryService.transferInventory(item, fromLocation, toLocation, movement.getQuantity());
+                movement.setItem(item);
+                movement.setLocation(toLocation);
+            }
+
+            default -> throw new IllegalArgumentException("Невідомий тип руху товару.");
+        }
+
+        // ✅ Зберігаємо рух тільки якщо всі операції пройшли успішно
+        stockMovementService.saveMovement(movement);
     }
 }
