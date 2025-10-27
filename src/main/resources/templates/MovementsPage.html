@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Рух товарів</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 { color: #333; }
+        form, table {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ccc; }
+        th { background-color: #eaeaea; }
+        input, select, button {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 6px;
+            border: 1px solid #aaa;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover { background: #45a049; }
+        .msg {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+<h1>Рух товарів</h1>
+
+<!-- ✅ Показуємо повідомлення про успішне додавання -->
+<div th:if="${param.success}" class="msg success">✅ Рух товару успішно зареєстровано!</div>
+
+<!-- ✅ Показуємо помилку -->
+<div th:if="${error}" class="msg error">
+    ⚠️ <span th:text="${error}"></span>
+</div>
+
+<!-- 🔹 Форма для комірника (не відображається для менеджера) -->
+<div th:if="${role == 'OPERATOR'}">
+
+    <a href="/manager"><button type="button">⬅ Назад</button></a>
+
+    <form th:action="@{/operator/add}" th:object="${movement}" method="post">
+
+        <label>Товар:</label><br>
+        <select th:field="*{item}" required>
+            <option th:each="i : ${items}" th:value="${i.item_id}" th:text="${i.name}"></option>
+        </select><br><br>
+
+        <label>Тип руху:</label><br>
+        <select name="movement_type" th:field="*{movement_type}" required>
+            <option value="IN">Прихід (оприбуткування)</option>
+            <option value="OUT">Видаток (списання)</option>
+            <option value="TRANSFER">Переміщення</option>
+        </select><br><br>
+
+        <!-- 🔁 Поля для переміщення -->
+        <div id="transferFields" style="display:none;">
+            <label>Звідки перемістити:</label><br>
+            <select name="fromLocation" required>
+                <option th:each="loc : ${locations}" th:value="${loc.location_id}"
+                        th:text="${loc.rack + '-' + loc.level + '-' + loc.position}"></option>
+            </select><br><br>
+
+            <label>Куди перемістити:</label><br>
+            <select name="toLocation" required>
+                <option th:each="loc : ${locations}" th:value="${loc.location_id}"
+                        th:text="${loc.rack + '-' + loc.level + '-' + loc.position}"></option>
+            </select><br><br>
+        </div>
+
+        <!-- 🔹 Локація для IN / OUT -->
+        <div id="singleLocation">
+            <label>Локація (стелаж / рівень / полиця):</label><br>
+            <select name="location" required>
+                <option th:each="l : ${locations}" th:value="${l.location_id}"
+                        th:text="${l.rack + '-' + l.level + '-' + l.position}"></option>
+            </select><br><br>
+        </div>
+
+        <label>Кількість:</label><br>
+        <input type="number" th:field="*{quantity}" min="1" required><br><br>
+
+        <button type="submit">Зареєструвати рух</button>
+    </form>
+</div>
+
+<!-- 📊 Таблиця історії рухів (загальна для всіх) -->
+<h2>Історія рухів товарів</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Товар</th>
+        <th>Кількість</th>
+        <th>Тип руху</th>
+        <th>Локація</th>
+        <th>Дата</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="m : ${movements}">
+        <td th:text="${m.movement_id}"></td>
+        <td th:text="${m.item.name}"></td>
+        <td th:text="${m.quantity}"></td>
+        <td th:text="${m.movement_type}"></td>
+        <td th:text="${m.location.rack + '-' + m.location.level + '-' + m.location.position}"></td>
+        <td th:text="${#temporals.format(m.date, 'yyyy-MM-dd HH:mm')}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- ⚙️ JS для динамічних полів -->
+<script>
+    const typeSelect = document.querySelector("[name='movement_type']");
+    const transferFields = document.getElementById("transferFields");
+    const singleLocation = document.getElementById("singleLocation");
+
+    function updateVisibility() {
+        if (typeSelect && transferFields && singleLocation) {
+            if (typeSelect.value === "TRANSFER") {
+                transferFields.style.display = "block";
+                singleLocation.style.display = "none";
+            } else {
+                transferFields.style.display = "none";
+                singleLocation.style.display = "block";
+            }
+        }
+    }
+
+    if (typeSelect) {
+        typeSelect.addEventListener("change", updateVisibility);
+        updateVisibility();
+    }
+</script>
+
+</body>
+</html>

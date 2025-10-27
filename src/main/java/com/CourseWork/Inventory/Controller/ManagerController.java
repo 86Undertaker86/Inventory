@@ -12,28 +12,17 @@ import org.springframework.web.bind.annotation.*;
 public class ManagerController {
 
     private final StockMovementService stockService;
-    private final ItemRepository itemRepo;
-    private final LocationRepository locationRepo;
-    private final StockMovementRepository movementRepo;
 
-    public ManagerController(StockMovementService stockService,
-                             ItemRepository itemRepo,
-                             LocationRepository locationRepo,
-                             StockMovementRepository movementRepo) {
+    public ManagerController(StockMovementService stockService) {
         this.stockService = stockService;
-        this.itemRepo = itemRepo;
-        this.locationRepo = locationRepo;
-        this.movementRepo = movementRepo;
     }
 
     // Головна сторінка менеджера
     @GetMapping
-    public String showManagerPage(Model model) {
-        model.addAttribute("movement", new StockMovement());
-        model.addAttribute("items", itemRepo.findAll());
-        model.addAttribute("locations", locationRepo.findAll());
-        model.addAttribute("movements", movementRepo.findAll());
-        return "ManagerPage"; // templates/ManagerPage.html
+    public String showMovementsForManager(Model model) {
+        model.addAttribute("role", "MANAGER");
+        model.addAttribute("movements", stockService.getAllMovements());
+        return "MovementsPage";
     }
 
     // Реєстрація нового руху

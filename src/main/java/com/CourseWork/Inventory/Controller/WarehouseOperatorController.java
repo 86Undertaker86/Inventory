@@ -34,12 +34,13 @@ public class WarehouseOperatorController {
 
     // 📦 Головна сторінка комірника
     @GetMapping
-    public String showOperatorPage(Model model) {
+    public String showOperatorMovements(Model model) {
+        model.addAttribute("role", "OPERATOR");
         model.addAttribute("movement", new StockMovement());
         model.addAttribute("items", itemRepo.findAll());
         model.addAttribute("locations", locationRepo.findAll());
         model.addAttribute("movements", stockMovementService.getAllMovements());
-        return "OperatorPage";
+        return "MovementsPage";
     }
 
     // 🔁 Реєстрація руху товару
@@ -59,7 +60,7 @@ public class WarehouseOperatorController {
             model.addAttribute("items", itemRepo.findAll());
             model.addAttribute("locations", locationRepo.findAll());
             model.addAttribute("movements", stockMovementService.getAllMovements());
-            return "OperatorPage";
+            return "MovementsPage";
         }
     }
 
