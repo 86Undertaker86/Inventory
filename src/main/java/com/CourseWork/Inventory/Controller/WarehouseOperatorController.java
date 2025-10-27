@@ -68,6 +68,6 @@ public class WarehouseOperatorController {
     @GetMapping("/inventory")
     public String viewInventory(Model model) {
         model.addAttribute("inventories", inventoryService.getAllInventories());
-        return "Inventory";
+        return "InventoryPage";
     }
 }
