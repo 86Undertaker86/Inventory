@@ -4,6 +4,7 @@ import com.CourseWork.Inventory.Model.Supplier;
 import com.CourseWork.Inventory.Repository.SupplierRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SupplierService {

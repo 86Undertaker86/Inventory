@@ -28,7 +28,13 @@ public class SupplierController {
     @PostMapping("/add")
     public String addSupplier(@ModelAttribute("newSupplier") Supplier supplier) {
         supplierService.saveSupplier(supplier);
-        return "redirect:/admin/suppliers?success";
+        return "redirect:/manager/suppliers?success";
+    }
+
+    @GetMapping("/get/{id}")
+    @ResponseBody
+    public Supplier getSupplierById(@PathVariable Integer id) {
+        return supplierService.getSupplierById(id);
     }
 
     // Редагування (заповнення форми)
@@ -45,13 +51,13 @@ public class SupplierController {
                                  @ModelAttribute("editSupplier") Supplier supplier) {
         supplier.setSupplier_id(id);
         supplierService.saveSupplier(supplier);
-        return "redirect:/admin/suppliers?updated";
+        return "redirect:/manager/suppliers?updated";
     }
 
     // Видалення
     @GetMapping("/delete/{id}")
     public String deleteSupplier(@PathVariable Integer id) {
         supplierService.deleteSupplier(id);
-        return "redirect:/admin/suppliers?deleted";
+        return "redirect:/manager/suppliers?deleted";
     }
 }
