@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/admin/suppliers")
+@RequestMapping("/manager/suppliers")
 public class SupplierController {
 
     private final SupplierService supplierService;
@@ -21,7 +21,7 @@ public class SupplierController {
     public String viewSuppliers(Model model) {
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
         model.addAttribute("newSupplier", new Supplier());
-        return "AdminSupplier";
+        return "SuppliersPage";
     }
 
     // Додавання нового постачальника
@@ -36,7 +36,7 @@ public class SupplierController {
     public String editSupplier(@PathVariable Integer id, Model model) {
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
         model.addAttribute("editSupplier", supplierService.getSupplierById(id));
-        return "AdminSupplier";
+        return "SuppliersPage";
     }
 
     // Оновлення

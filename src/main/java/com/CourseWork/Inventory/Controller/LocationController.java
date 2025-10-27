@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/admin/locations")
+@RequestMapping("/manager/locations")
 public class LocationController {
 
     private final LocationService locationService;
@@ -21,7 +21,7 @@ public class LocationController {
     public String viewLocations(Model model) {
         model.addAttribute("locations", locationService.getAllLocations());
         model.addAttribute("newLocation", new Location());
-        return "AdminLocation";
+        return "LocationsPage";
     }
 
     // Додавання нової локації
@@ -36,7 +36,7 @@ public class LocationController {
     public String editLocation(@PathVariable Integer id, Model model) {
         model.addAttribute("locations", locationService.getAllLocations());
         model.addAttribute("editLocation", locationService.getLocationById(id));
-        return "AdminLocation";
+        return "LocationsPage";
     }
 
     // Оновлення

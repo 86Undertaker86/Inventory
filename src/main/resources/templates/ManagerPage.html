@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель менеджера</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 30px;
+        }
+        h1 { color: #333; }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover { background-color: #45a049; }
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<h1>📦 Панель менеджера</h1>
+
+<div class="card">
+    <h2>Керування складом</h2>
+    <a href="/manager/items"><button>📦 Товари</button></a>
+    <a href="/manager/reorder"><button>⚙️ Мінімальні залишки</button></a>
+    <a href="/operator/inventory"><button>📊 Залишки товарів</button></a>
+    <a href="/manager/movements"><button>🚚 Рух товарів</button></a>
+</div>
+
+<div class="card">
+    <h2>Керування постачальниками</h2>
+    <a href="/manager/suppliers"><button>🏭 Постачальники</button></a>
+</div>
+
+<div class="card">
+    <h2>Керування локаціями складу</h2>
+    <a href="/manager/locations"><button>🗂 Локації складу</button></a>
+</div>
+
+<a href="/logout"><button style="background:#d9534f;">🚪 Вийти</button></a>
+
+</body>
+</html>
