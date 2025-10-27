@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Залишки товарів на складі</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #eaeaea;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <h1>📦 Залишки товарів на складі</h1>
+    <a href="/operator">
+        <button>⬅ Назад до комірника</button>
+    </a>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Товар</th>
+        <th>Локація (Стелаж / Рівень / Позиція)</th>
+        <th>Кількість</th>
+        <th>Останнє оновлення</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="inv : ${inventories}">
+        <td th:text="${inv.inventory_id}"></td>
+        <td th:text="${inv.item.name}"></td>
+        <td th:text="${inv.location.rack + '-' + inv.location.level + '-' + inv.location.position}"></td>
+        <td th:text="${inv.quantity}"></td>
+        <td th:text="${#temporals.format(inv.last_update, 'yyyy-MM-dd HH:mm')}"></td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(inventories)}">
+        <td colspan="5" class="no-data">Немає даних про залишки</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

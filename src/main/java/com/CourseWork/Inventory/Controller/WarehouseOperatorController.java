@@ -62,4 +62,10 @@ public class WarehouseOperatorController {
 
         return "redirect:/operator?success";
     }
+
+    @GetMapping("/inventory")
+    public String viewInventory(Model model) {
+        model.addAttribute("inventories", inventoryService.getAllInventories());
+        return "Inventory";
+    }
 }
