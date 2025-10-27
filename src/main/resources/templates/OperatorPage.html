@@ -75,6 +75,11 @@
     <button type="submit">Зареєструвати</button>
 </form>
 
+<div th:if="${error}" style="background:#f8d7da; color:#721c24; padding:10px; border-radius:5px; margin-bottom:15px;">
+    ⚠️ <span th:text="${error}"></span>
+</div>
+
+
 <h2>Історія рухів</h2>
 <table>
     <thead>

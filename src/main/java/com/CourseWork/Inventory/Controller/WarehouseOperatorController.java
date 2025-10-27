@@ -1,11 +1,11 @@
 package com.CourseWork.Inventory.Controller;
 
-import com.CourseWork.Inventory.Model.StockMovement;
 import com.CourseWork.Inventory.Model.MovementType;
+import com.CourseWork.Inventory.Model.StockMovement;
 import com.CourseWork.Inventory.Repository.ItemRepository;
 import com.CourseWork.Inventory.Repository.LocationRepository;
-import com.CourseWork.Inventory.Service.StockMovementService;
 import com.CourseWork.Inventory.Service.InventoryService;
+import com.CourseWork.Inventory.Service.StockMovementService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +43,8 @@ public class WarehouseOperatorController {
     @PostMapping("/add")
     public String addMovement(@ModelAttribute("movement") StockMovement movement,
                               @RequestParam("item") Integer itemId,
-                              @RequestParam("location") Integer locationId) {
+                              @RequestParam("location") Integer locationId,
+                              Model model) {
 
         var item = itemRepo.findById(itemId).orElse(null);
         var location = locationRepo.findById(locationId).orElse(null);
@@ -51,16 +52,28 @@ public class WarehouseOperatorController {
         movement.setItem(item);
         movement.setLocation(location);
 
-        stockMovementService.saveMovement(movement);
+        try {
+            // ⚙️ Спочатку оновлюємо залишки
+            if (movement.getMovement_type() == MovementType.IN) {
+                inventoryService.saveInventory(item, location, movement.getQuantity());
+            } else if (movement.getMovement_type() == MovementType.OUT) {
+                inventoryService.saveInventory(item, location, -movement.getQuantity());
+            }
 
-        // ✅ Передаємо об'єкти, а не лише ID
-        if (movement.getMovement_type() == MovementType.IN) {
-            inventoryService.saveInventory(item, location, movement.getQuantity());
-        } else if (movement.getMovement_type() == MovementType.OUT) {
-            inventoryService.saveInventory(item, location, -movement.getQuantity());
+            // ✅ Якщо все пройшло без помилок — зберігаємо запис у історію рухів
+            stockMovementService.saveMovement(movement);
+
+            return "redirect:/operator?success";
+
+        } catch (IllegalArgumentException e) {
+            // ⚠️ Виводимо помилку на сторінці без додавання руху в історію
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("movement", new StockMovement());
+            model.addAttribute("items", itemRepo.findAll());
+            model.addAttribute("locations", locationRepo.findAll());
+            model.addAttribute("movements", stockMovementService.getAllMovements());
+            return "OperatorPage";
         }
-
-        return "redirect:/operator?success";
     }
 
     @GetMapping("/inventory")
