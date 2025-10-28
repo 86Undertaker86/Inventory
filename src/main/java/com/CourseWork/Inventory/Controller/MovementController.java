@@ -10,17 +10,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-public class StockMovementController {
+public class MovementController {
 
     private final WarehouseOperatorService operatorService;
     private final ItemRepository itemRepo;
     private final LocationRepository locationRepo;
     private final MovementService movementService;
 
-    public StockMovementController(WarehouseOperatorService operatorService,
-                                       ItemRepository itemRepo,
-                                       LocationRepository locationRepo,
-                                       MovementService movementService) {
+    public MovementController(WarehouseOperatorService operatorService,
+                              ItemRepository itemRepo,
+                              LocationRepository locationRepo,
+                              MovementService movementService) {
         this.operatorService = operatorService;
         this.itemRepo = itemRepo;
         this.locationRepo = locationRepo;
