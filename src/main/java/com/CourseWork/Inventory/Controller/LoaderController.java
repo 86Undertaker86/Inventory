@@ -9,7 +9,7 @@ public class LoaderController {
 
     // 📦 Головна сторінка комірника
     @GetMapping
-    public String showLoaderMovements() {
+    public String loaderPage() {
         return "LoaderPage";
     }
 }

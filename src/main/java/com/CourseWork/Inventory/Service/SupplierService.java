@@ -9,25 +9,24 @@ import java.util.Optional;
 @Service
 public class SupplierService {
 
-    private final SupplierRepository supplierRepo;
+    private final SupplierRepository supplierRepository;
 
     public SupplierService(SupplierRepository supplierRepo) {
-        this.supplierRepo = supplierRepo;
+        this.supplierRepository = supplierRepo;
     }
 
     public List<Supplier> getAllSuppliers() {
-        return supplierRepo.findAll();
+        return supplierRepository.findAll();
     }
 
     public Supplier getSupplierById(Integer id) {
-        return supplierRepo.findById(id).orElse(null);
+        return supplierRepository.findById(id).orElse(null);
     }
 
     public void saveSupplier(Supplier supplier) {
-        supplierRepo.save(supplier);
+        supplierRepository.save(supplier);
     }
 
-    public void deleteSupplier(Integer id) {
-        supplierRepo.deleteById(id);
+    public void deleteSupplier(Integer id) { supplierRepository.deleteById(id);
     }
 }

@@ -8,25 +8,25 @@ import java.util.List;
 @Service
 public class ItemService {
 
-    private final ItemRepository itemRepo;
+    private final ItemRepository itemRepository;
 
-    public ItemService(ItemRepository itemRepo) {
-        this.itemRepo = itemRepo;
+    public ItemService(ItemRepository itemRepository) {
+        this.itemRepository = itemRepository;
     }
 
     public List<Item> getAllItems() {
-        return itemRepo.findAll();
+        return itemRepository.findAll();
     }
 
     public Item getItemById(Integer id) {
-        return itemRepo.findById(id).orElse(null);
+        return itemRepository.findById(id).orElse(null);
     }
 
     public void saveItem(Item item) {
-        itemRepo.save(item);
+        itemRepository.save(item);
     }
 
     public void deleteItem(Integer id) {
-        itemRepo.deleteById(id);
+        itemRepository.deleteById(id);
     }
 }

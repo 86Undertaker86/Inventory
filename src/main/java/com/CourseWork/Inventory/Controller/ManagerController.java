@@ -9,7 +9,7 @@ public class ManagerController {
 
     // Головна сторінка менеджера
     @GetMapping
-    public String showManagerPage() {
+    public String managerPage() {
         return "ManagerPage";
     }
 }
