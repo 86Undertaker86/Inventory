@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<h1>👥 Керування користувачами</h1>
+<h1>Керування користувачами</h1>
 
 <!-- 🔹 Кнопки разом -->
 <div class="button-bar">
@@ -35,7 +35,7 @@
             <option value="MANAGER">MANAGER</option>
             <option value="OPERATOR">OPERATOR</option>
         </select>
-        <button type="submit">✅ Додати</button>
+        <button type="submit">Додати</button>
     </form>
 </div>
 
@@ -53,6 +53,7 @@
     </select>
 
     <!-- Форма оновлення (спочатку прихована) -->
+    <!-- Форма оновлення -->
     <form id="userEditForm" class="hidden"
           th:action="@{/admin/user/update/__ID__}"
           th:object="${editUser}" method="post">
@@ -61,13 +62,14 @@
         <input type="text" id="edit_username" name="username" placeholder="Ім’я користувача" required>
         <input type="text" id="edit_full_name" name="full_name" placeholder="Повне ім’я">
         <input type="email" id="edit_email" name="email" placeholder="Електронна пошта">
+        <input type="password" id="edit_password" name="password" placeholder="Новий пароль (необов’язково)">
         <select id="edit_roleUser" name="roleUser" required>
             <option value="">— Оберіть роль —</option>
             <option value="ADMIN">ADMIN</option>
             <option value="MANAGER">MANAGER</option>
             <option value="OPERATOR">OPERATOR</option>
         </select>
-        <button type="submit">💾 Оновити</button>
+        <button type="submit">Оновити</button>
     </form>
 </div>
 
@@ -102,7 +104,7 @@
 </div>
 
 <!-- 🔹 Кнопка виходу -->
-<a href="/logout"><button class="logout-btn">🚪 Вийти</button></a>
+<a href="/logout"><button class="logout-btn">Вийти</button></a>
 
 <!-- 🔹 JS для логіки відкриття форм -->
 <script>
