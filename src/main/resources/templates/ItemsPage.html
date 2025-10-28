@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Керування товарами</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<h1>Керування товарами</h1>
+
+<!-- 🔹 Панель кнопок -->
+<div class="button-bar">
+    <a href="/manager"><button class="first">⬅ Назад</button></a>
+    <button id="toggleAddBtn" class="second">➕ Додати товар</button>
+    <button id="toggleEditBtn" class="second">✏ Редагувати товар</button>
+</div>
+
+<!-- 🔹 Повідомлення -->
+<div th:if="${param.success}" class="message success">✅ Товар успішно додано!</div>
+<div th:if="${param.updated}" class="message updated">🔄 Товар оновлено!</div>
+<div th:if="${param.deleted}" class="message deleted">❌ Товар видалено!</div>
+
+<!-- 🔹 Форма додавання -->
+<div id="addForm" class="card hidden">
+    <h2>Додати товар</h2>
+    <form th:action="@{/manager/items/add}" th:object="${newItem}" method="post">
+
+        <input type="text" th:field="*{name}" placeholder="Назва товару" required>
+        <textarea th:field="*{description}" placeholder="Опис"></textarea>
+
+        <select th:field="*{supplier}">
+            <option value="">— Оберіть постачальника —</option>
+            <option th:each="s : ${suppliers}" th:value="${s.supplier_id}" th:text="${s.name_company}"></option>
+        </select>
+
+        <input type="number" th:field="*{min_level}" placeholder="Мінімальний рівень" min="0" required>
+        <input type="number" th:field="*{max_level}" placeholder="Максимальний рівень" min="0" required>
+
+        <button type="submit">Додати</button>
+    </form>
+</div>
+
+<!-- 🔹 Форма редагування -->
+<div id="editForm" class="card hidden">
+    <h2>Редагувати товар</h2>
+
+    <label for="itemSelect">Оберіть товар:</label>
+    <select id="itemSelect">
+        <option value="">— Оберіть зі списку —</option>
+        <option th:each="i : ${items}"
+                th:value="${i.item_id}"
+                th:text="${i.name}"></option>
+    </select>
+
+    <form id="itemEditForm" class="hidden"
+          th:action="@{/manager/items/update/__ID__}"
+          th:object="${editItem}" method="post">
+
+        <input type="hidden" name="item_id" id="edit_id">
+
+        <input type="text" id="edit_name" name="name" placeholder="Назва товару" required>
+        <textarea id="edit_description" name="description" placeholder="Опис"></textarea>
+
+        <select id="edit_supplier" name="supplier">
+            <option value="">— Оберіть постачальника —</option>
+            <option th:each="s : ${suppliers}"
+                    th:value="${s.supplier_id}"
+                    th:text="${s.name_company}"></option>
+        </select>
+
+        <input type="number" id="edit_min_level" name="min_level" placeholder="Мінімальний рівень" min="0" required>
+        <input type="number" id="edit_max_level" name="max_level" placeholder="Максимальний рівень" min="0" required>
+
+        <button type="submit">Оновити</button>
+    </form>
+</div>
+
+<!-- 🔹 Таблиця товарів -->
+<div id="itemsTable" class="card">
+    <h2>Список товарів</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Назва</th>
+            <th>Опис</th>
+            <th>Постачальник</th>
+            <th>Мін.</th>
+            <th>Макс.</th>
+            <th>Дії</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="i : ${items}">
+            <td th:text="${i.item_id}"></td>
+            <td th:text="${i.name}"></td>
+            <td th:text="${i.description}"></td>
+            <td th:text="${i.supplier != null ? i.supplier.name_company : '—'}"></td>
+            <td th:text="${i.min_level}"></td>
+            <td th:text="${i.max_level}"></td>
+            <td>
+                <a th:href="@{'/manager/items/delete/' + ${i.item_id}}"
+                   onclick="return confirm('Видалити товар?');">Видалити</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 🔹 Скрипт керування -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const addBtn = document.getElementById('toggleAddBtn');
+        const editBtn = document.getElementById('toggleEditBtn');
+        const addForm = document.getElementById('addForm');
+        const editForm = document.getElementById('editForm');
+        const itemSelect = document.getElementById('itemSelect');
+        const itemEditForm = document.getElementById('itemEditForm');
+
+        /* === Кнопка додавання === */
+        if (addBtn && addForm) {
+            addBtn.addEventListener('click', () => {
+                const hidden = addForm.classList.toggle('hidden');
+                addBtn.textContent = hidden ? '➕ Додати товар' : '▲ Закрити форму';
+
+                if (!hidden && editForm && !editForm.classList.contains('hidden')) {
+                    editForm.classList.add('hidden');
+                    if (editBtn) editBtn.textContent = '✏ Редагувати товар';
+                }
+            });
+        }
+
+        /* === Кнопка редагування === */
+        if (editBtn && editForm) {
+            editBtn.addEventListener('click', () => {
+                const hidden = editForm.classList.toggle('hidden');
+                editBtn.textContent = hidden ? '✏ Редагувати товар' : '▲ Закрити форму редагування';
+
+                if (!hidden && addForm && !addForm.classList.contains('hidden')) {
+                    addForm.classList.add('hidden');
+                    if (addBtn) addBtn.textContent = '➕ Додати товар';
+                }
+            });
+        }
+
+        /* === Вибір товару для редагування === */
+        if (itemSelect) {
+            itemSelect.selectedIndex = 0;
+
+            itemSelect.addEventListener('change', async () => {
+                const id = itemSelect.value;
+                if (!id) {
+                    itemEditForm.classList.add('hidden');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/manager/items/get/${id}`);
+                    if (!response.ok) throw new Error("Не вдалося отримати дані товару");
+                    const item = await response.json();
+
+                    document.getElementById('edit_id').value = item.item_id;
+                    document.getElementById('edit_name').value = item.name;
+                    document.getElementById('edit_description').value = item.description || '';
+                    document.getElementById('edit_supplier').value = item.supplier ? item.supplier.supplier_id : '';
+                    document.getElementById('edit_min_level').value = item.min_level;
+                    document.getElementById('edit_max_level').value = item.max_level;
+
+                    itemEditForm.action = `/manager/items/update/${item.item_id}`;
+                    itemEditForm.classList.remove('hidden');
+                } catch (err) {
+                    alert("Помилка при отриманні даних товару!");
+                    console.error(err);
+                }
+            });
+        }
+
+        /* === Зникнення повідомлень === */
+        const alerts = document.querySelectorAll('.message');
+        alerts.forEach(alert => {
+            setTimeout(() => alert.classList.add('fade-out'), 3000);
+            setTimeout(() => alert.remove(), 4000);
+        });
+
+        /* === Очищення URL після перезавантаження === */
+        if (window.location.search) {
+            const url = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, url);
+        }
+    });
+</script>
+</body>
+</html>

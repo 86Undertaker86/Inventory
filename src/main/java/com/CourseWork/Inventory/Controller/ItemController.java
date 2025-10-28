@@ -25,7 +25,7 @@ public class ItemController {
         model.addAttribute("items", itemService.getAllItems());
         model.addAttribute("newItem", new Item());
         model.addAttribute("suppliers", supplierRepository.findAll()); // 👈 додай це
-        return "ManagerItems";
+        return "ItemsPage";
     }
 
     // Додавання нового товару
@@ -39,6 +39,12 @@ public class ItemController {
         return "redirect:/manager/items?success";
     }
 
+    @GetMapping("/get/{id}")
+    @ResponseBody
+    public Item getItemById(@PathVariable("id") Integer id) {
+        return itemService.getItemById(id);
+    }
+
     // Редагування (заповнення форми)
     @GetMapping("/edit/{id}")
     public String editItem(@PathVariable("id") Integer id, Model model) {
@@ -46,7 +52,7 @@ public class ItemController {
         model.addAttribute("editItem", item);
         model.addAttribute("items", itemService.getAllItems());
         model.addAttribute("suppliers", supplierRepository.findAll()); // Додаємо список постачальників
-        return "ManagerItems";
+        return "ItemsPage";
     }
 
     // Збереження змін
