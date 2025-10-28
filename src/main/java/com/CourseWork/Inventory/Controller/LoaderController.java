@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/operator")
-public class WarehouseOperatorController {
+public class LoaderController {
 
     private final WarehouseOperatorService operatorService;
     private final ItemRepository itemRepo;
     private final LocationRepository locationRepo;
     private final StockMovementService stockMovementService;
 
-    public WarehouseOperatorController(WarehouseOperatorService operatorService,
-                                       ItemRepository itemRepo,
-                                       LocationRepository locationRepo,
-                                       StockMovementService stockMovementService) {
+    public LoaderController(WarehouseOperatorService operatorService,
+                            ItemRepository itemRepo,
+                            LocationRepository locationRepo,
+                            StockMovementService stockMovementService) {
         this.operatorService = operatorService;
         this.itemRepo = itemRepo;
         this.locationRepo = locationRepo;
