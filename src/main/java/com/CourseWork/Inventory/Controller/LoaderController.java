@@ -36,7 +36,7 @@ public class LoaderController {
         model.addAttribute("items", itemRepo.findAll());
         model.addAttribute("locations", locationRepo.findAll());
         model.addAttribute("movements", stockMovementService.getAllMovements());
-        return "MovementPage";
+        return "LoaderPage";
     }
 
     // 🔁 Реєстрація руху товару

@@ -31,9 +31,6 @@ public class StockMovementController {
     @GetMapping("/manager/movements")
     public String showManagerMovements(Model model) {
         model.addAttribute("role", "MANAGER");
-        model.addAttribute("movement", new StockMovement());
-        model.addAttribute("items", itemRepo.findAll());
-        model.addAttribute("locations", locationRepo.findAll());
         model.addAttribute("movements", stockMovementService.getAllMovements());
         return "MovementPage";
     }
