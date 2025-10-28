@@ -2,73 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Локації складу</title>
-    <style>
-        body { font-family: Arial; margin: 40px; background: #f4f4f4; }
-        h1 { color: #333; }
-        table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #eaeaea; }
-        tr:hover { background: #f9f9f9; }
-        form { background: white; padding: 15px; border-radius: 8px; margin-top: 20px; }
-        input { margin: 5px; padding: 6px; }
-        button { background: #4CAF50; color: white; border: none; padding: 6px 10px; cursor: pointer; border-radius: 6px; }
-        button:hover { background: #45a049; }
-        a { text-decoration: none; font-weight: bold; }
-        a.delete { color: red; }
-        a.edit { color: #0066cc; }
-        .divider { margin: 30px 0; border-top: 1px solid #ccc; }
-        .msg { padding: 10px; border-radius: 5px; margin-bottom: 10px; }
-        .success { background: #d4edda; color: #155724; }
-        .updated { background: #d1ecf1; color: #0c5460; }
-        .deleted { background: #f8d7da; color: #721c24; }
-    </style>
+    <title>Керування локаціями</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
-<h1>📦 Керування локаціями складу</h1>
+<h1>Керування локаціями</h1>
 
-<a href="/admin"><button type="button">⬅ Назад до адміністратора</button></a>
+<!-- 🔹 Кнопки -->
+<div class="button-bar">
+    <a href="/manager"><button class="first">⬅ Назад</button></a>
+    <button id="toggleAddBtn" class="second">➕ Додати локацію</button>
+    <button id="toggleEditBtn" class="second">✏ Редагувати локацію</button>
+</div>
 
-<!-- Повідомлення -->
-<div th:if="${param.success}" class="msg success">✅ Локацію додано!</div>
-<div th:if="${param.updated}" class="msg updated">🔄 Локацію оновлено!</div>
-<div th:if="${param.deleted}" class="msg deleted">❌ Локацію видалено!</div>
+<!-- 🔹 Повідомлення -->
+<div th:if="${param.success}" class="message success">Локацію додано!</div>
+<div th:if="${param.updated}" class="message updated">Локацію оновлено!</div>
+<div th:if="${param.deleted}" class="message deleted">Локацію видалено!</div>
 
-<h2>Список локацій</h2>
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Стелаж</th>
-        <th>Рівень</th>
-        <th>Позиція</th>
-        <th>Опис</th>
-        <th>Дії</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="l : ${locations}">
-        <td th:text="${l.location_id}"></td>
-        <td th:text="${l.rack}"></td>
-        <td th:text="${l.level}"></td>
-        <td th:text="${l.position}"></td>
-        <td th:text="${l.description}"></td>
-        <td>
-            <a th:href="@{'/admin/locations/edit/' + ${l.location_id}}" class="edit">Редагувати</a> |
-            <a th:href="@{'/admin/locations/delete/' + ${l.location_id}}" class="delete"
-               onclick="return confirm('Видалити локацію?');">Видалити</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-<div class="divider"></div>
-
-<!-- Форма додавання -->
-<div th:if="${editLocation == null}">
+<!-- 🔹 Форма додавання -->
+<div id="addForm" class="card hidden">
     <h2>Додати локацію</h2>
-    <form th:action="@{/admin/locations/add}" th:object="${newLocation}" method="post">
+    <form th:action="@{/manager/locations/add}" th:object="${newLocation}" method="post">
         <input type="text" th:field="*{rack}" placeholder="Стелаж (напр. A)" required>
         <input type="text" th:field="*{level}" placeholder="Рівень (напр. 1)" required>
         <input type="text" th:field="*{position}" placeholder="Позиція (напр. 3)" required>
@@ -77,18 +33,144 @@
     </form>
 </div>
 
-<!-- Форма редагування -->
-<div th:if="${editLocation != null}">
-    <h2>Редагувати локацію (ID: <span th:text="${editLocation.location_id}"></span>)</h2>
-    <form th:action="@{'/admin/locations/update/' + ${editLocation.location_id}}"
+<!-- 🔹 Форма редагування -->
+<div id="editForm" class="card hidden">
+    <h2>Редагувати локацію</h2>
+
+    <label for="locationSelect">Оберіть локацію:</label>
+    <select id="locationSelect">
+        <option value="">— Оберіть зі списку —</option>
+        <option th:each="l : ${locations}"
+                th:value="${l.location_id}"
+                th:text="${l.rack + '-' + l.level + '-' + l.position}"></option>
+    </select>
+
+    <form id="locationEditForm" class="hidden"
+          th:action="@{/manager/locations/update/__ID__}"
           th:object="${editLocation}" method="post">
-        <input type="text" th:field="*{rack}" placeholder="Стелаж" required>
-        <input type="text" th:field="*{level}" placeholder="Рівень" required>
-        <input type="text" th:field="*{position}" placeholder="Позиція" required>
-        <input type="text" th:field="*{description}" placeholder="Опис">
+
+        <input type="hidden" name="location_id" id="edit_id">
+        <input type="text" id="edit_rack" name="rack" placeholder="Стелаж" required>
+        <input type="text" id="edit_level" name="level" placeholder="Рівень" required>
+        <input type="text" id="edit_position" name="position" placeholder="Позиція" required>
+        <input type="text" id="edit_description" name="description" placeholder="Опис">
         <button type="submit">Оновити</button>
     </form>
 </div>
+
+<!-- 🔹 Таблиця локацій -->
+<div id="locationsTable" class="card">
+    <h2>Список локацій</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Стелаж</th>
+            <th>Рівень</th>
+            <th>Позиція</th>
+            <th>Опис</th>
+            <th>Дії</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="l : ${locations}">
+            <td th:text="${l.location_id}"></td>
+            <td th:text="${l.rack}"></td>
+            <td th:text="${l.level}"></td>
+            <td th:text="${l.position}"></td>
+            <td th:text="${l.description}"></td>
+            <td>
+                <a th:href="@{'/manager/locations/delete/' + ${l.location_id}}"
+                   onclick="return confirm('Видалити локацію?');">Видалити</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 🔹 Скрипт -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const addBtn = document.getElementById('toggleAddBtn');
+        const editBtn = document.getElementById('toggleEditBtn');
+        const addForm = document.getElementById('addForm');
+        const editForm = document.getElementById('editForm');
+        const locationSelect = document.getElementById('locationSelect');
+        const locationEditForm = document.getElementById('locationEditForm');
+
+        // === Додавання ===
+        if (addBtn && addForm) {
+            addBtn.addEventListener('click', () => {
+                const hidden = addForm.classList.toggle('hidden');
+                addBtn.textContent = hidden
+                    ? '➕ Додати локацію'
+                    : '▲ Закрити форму';
+                if (!hidden && editForm && !editForm.classList.contains('hidden')) {
+                    editForm.classList.add('hidden');
+                    editBtn.textContent = '✏ Редагувати локацію';
+                }
+            });
+        }
+
+        // === Редагування ===
+        if (editBtn && editForm) {
+            editBtn.addEventListener('click', () => {
+                const hidden = editForm.classList.toggle('hidden');
+                editBtn.textContent = hidden
+                    ? '✏ Редагувати локацію'
+                    : '▲ Закрити форму редагування';
+                if (!hidden && addForm && !addForm.classList.contains('hidden')) {
+                    addForm.classList.add('hidden');
+                    addBtn.textContent = '➕ Додати локацію';
+                }
+            });
+        }
+
+        // === Завантаження локації для редагування ===
+        if (locationSelect) {
+            locationSelect.selectedIndex = 0;
+
+            locationSelect.addEventListener('change', async () => {
+                const id = locationSelect.value;
+                if (!id) {
+                    locationEditForm.classList.add('hidden');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/manager/locations/get/${id}`);
+                    if (!response.ok) throw new Error("Не вдалося отримати дані");
+                    const location = await response.json();
+
+                    document.getElementById('edit_id').value = location.location_id;
+                    document.getElementById('edit_rack').value = location.rack;
+                    document.getElementById('edit_level').value = location.level;
+                    document.getElementById('edit_position').value = location.position;
+                    document.getElementById('edit_description').value = location.description || '';
+
+                    locationEditForm.action = `/manager/locations/update/${location.location_id}`;
+                    locationEditForm.classList.remove('hidden');
+                } catch (err) {
+                    alert("Помилка при отриманні даних локації!");
+                    console.error(err);
+                }
+            });
+        }
+
+        // === Автоматичне зникнення повідомлень ===
+        const alerts = document.querySelectorAll('.msg, .alert, .message');
+        alerts.forEach(alert => {
+            setTimeout(() => alert.classList.add('fade-out'), 3000);
+            setTimeout(() => alert.remove(), 4000);
+        });
+
+        // === Очищення URL від параметрів ===
+        if (window.location.search) {
+            const url = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, url);
+        }
+    });
+</script>
 
 </body>
 </html>

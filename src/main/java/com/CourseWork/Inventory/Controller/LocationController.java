@@ -1,5 +1,6 @@
 package com.CourseWork.Inventory.Controller;
 
+import com.CourseWork.Inventory.Model.Item;
 import com.CourseWork.Inventory.Model.Location;
 import com.CourseWork.Inventory.Service.LocationService;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,12 @@ public class LocationController {
     public String addLocation(@ModelAttribute("newLocation") Location location) {
         locationService.saveLocation(location);
         return "redirect:/admin/locations?success";
+    }
+
+    @GetMapping("/get/{id}")
+    @ResponseBody
+    public Location getLocationById(@PathVariable("id") Integer id) {
+        return locationService.getLocationById(id);
     }
 
     // Відкрити форму редагування
