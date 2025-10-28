@@ -46,10 +46,27 @@ h1 {
     transition: var(--transition);
 }
 
-/* Спокійний ефект при наведенні без зсуву */
+/* Спокійний ефект при наведенні */
 .card:hover, form:hover, table:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     transition: box-shadow 0.3s ease;
+}
+
+/* === Плавне відкриття/закриття без анімації === */
+.hidden {
+    opacity: 0;
+    overflow: hidden;
+    padding: 0 20px;
+    margin: 0;
+    transition: max-height 0.5s ease, opacity 0.4s ease;
+}
+
+/* Коли форма відкрита */
+.card:not(.hidden) {
+    opacity: 1;
+    padding: 20px;
+    margin-bottom: 30px;
+    transition: max-height 0.5s ease, opacity 0.4s ease;
 }
 
 /* Таблиці */
@@ -122,9 +139,6 @@ button:hover, .btn:hover {
 button.first {
     background-color: #666;
 }
-button.secondary:hover {
-    background-color: #444;
-}
 
 /* Верхня панель із кнопками */
 /* === Панель кнопок === */
@@ -133,29 +147,6 @@ button.secondary:hover {
     gap: 12px; /* відстань між кнопками */
     align-items: center;
     margin-bottom: 20px;
-}
-
-/* === Плавне відкриття форми === */
-.hidden {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-#addForm {
-    animation: slideDown 0.4s ease forwards;
-    transform-origin: top;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* Повідомлення */
