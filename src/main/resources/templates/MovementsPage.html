@@ -3,154 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <title>Рух товарів</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-            background-color: #f4f4f4;
-        }
-        h1, h2 { color: #333; }
-        form, table {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-        }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; border: 1px solid #ccc; }
-        th { background-color: #eaeaea; }
-        input, select, button {
-            padding: 8px;
-            margin: 5px 0;
-            border-radius: 6px;
-            border: 1px solid #aaa;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover { background: #45a049; }
-        .msg {
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
 <h1>Рух товарів</h1>
 
-<!-- ✅ Повідомлення -->
-<div th:if="${param.success}" class="msg success">✅ Рух товару успішно зареєстровано!</div>
-<div th:if="${error}" class="msg error">
+<!-- 🔹 Кнопки управління -->
+<div class="button-bar" th:if="${role == 'OPERATOR'}">
+    <a href="/operator"><button class="first">⬅ Назад</button></a>
+</div>
+<div class="button-bar" th:if="${role != 'OPERATOR'}">
+    <a href="/manager"><button class="first">⬅ Назад</button></a>
+</div>
+
+<!-- 🔹 Повідомлення -->
+<div th:if="${param.success}" class="message success">✅ Рух товару успішно зареєстровано!</div>
+<div th:if="${error}" class="message error">
     ⚠️ <span th:text="${error}"></span>
 </div>
 
-<!-- 🔹 Форма тільки для ОПЕРАТОРА -->
-<div th:if="${role == 'OPERATOR'}">
+<!-- 🔹 Форма руху (лише для оператора) -->
+<div th:if="${role == 'OPERATOR'}" id="movementForm" class="card">
+    <h2>Зареєструвати рух товару</h2>
+    <form th:action="@{/add}" th:object="${movement}" method="post">
 
-    <!-- кнопка назад -->
-    <a href="/operator"><button type="button">⬅ Назад</button></a>
-
-    <!-- форма -->
-    <form th:action="@{/operator/add}" th:object="${movement}" method="post">
-
-        <label>Товар:</label><br>
+        <label>Товар:</label>
         <select th:field="*{item}" required>
+            <option value="">— Оберіть товар —</option>
             <option th:each="i : ${items}" th:value="${i.item_id}" th:text="${i.name}"></option>
-        </select><br><br>
+        </select>
 
-        <label>Тип руху:</label><br>
-        <select name="movement_type" th:field="*{movement_type}" required>
+        <label>Тип руху:</label>
+        <select name="movement_type" th:field="*{movement_type}" required id="movementType">
+            <option value="">— Оберіть тип —</option>
             <option value="IN">Прихід (оприбуткування)</option>
             <option value="OUT">Видаток (списання)</option>
             <option value="TRANSFER">Переміщення</option>
-        </select><br><br>
+        </select>
 
         <!-- 🔁 Поля для переміщення -->
         <div id="transferFields" style="display:none;">
-            <label>Звідки перемістити:</label><br>
-            <select name="fromLocation" required>
+            <label>Звідки перемістити:</label>
+            <select name="fromLocation">
+                <option value="">— Оберіть —</option>
                 <option th:each="loc : ${locations}" th:value="${loc.location_id}"
                         th:text="${loc.rack + '-' + loc.level + '-' + loc.position}"></option>
-            </select><br><br>
+            </select>
 
-            <label>Куди перемістити:</label><br>
-            <select name="toLocation" required>
+            <label>Куди перемістити:</label>
+            <select name="toLocation">
+                <option value="">— Оберіть —</option>
                 <option th:each="loc : ${locations}" th:value="${loc.location_id}"
                         th:text="${loc.rack + '-' + loc.level + '-' + loc.position}"></option>
-            </select><br><br>
+            </select>
         </div>
 
-        <!-- 🔹 Для IN / OUT -->
+        <!-- 📦 Для IN / OUT -->
         <div id="singleLocation">
-            <label>Локація (стелаж / рівень / полиця):</label><br>
-            <select name="location" required>
+            <label>Локація (стелаж / рівень / полиця):</label>
+            <select name="location">
+                <option value="">— Оберіть —</option>
                 <option th:each="l : ${locations}" th:value="${l.location_id}"
                         th:text="${l.rack + '-' + l.level + '-' + l.position}"></option>
-            </select><br><br>
+            </select>
         </div>
 
-        <label>Кількість:</label><br>
-        <input type="number" th:field="*{quantity}" min="1" required><br><br>
+        <label>Кількість:</label>
+        <input type="number" th:field="*{quantity}" min="1" required>
 
-        <button type="submit">Зареєструвати рух</button>
+        <button type="submit" class="second">💾 Зареєструвати рух</button>
     </form>
 </div>
 
-<!-- 📊 Таблиця історії рухів -->
-<h2>Історія рухів товарів</h2>
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Товар</th>
-        <th>Кількість</th>
-        <th>Тип руху</th>
-        <th>Локація</th>
-        <th>Дата</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="m : ${movements}">
-        <td th:text="${m.movement_id}"></td>
-        <td th:text="${m.item.name}"></td>
-        <td th:text="${m.quantity}"></td>
-        <td th:text="${m.movement_type}"></td>
-        <td th:text="${m.location != null ? m.location.rack + '-' + m.location.level + '-' + m.location.position : '-'}"></td>
-        <td th:text="${#temporals.format(m.date, 'yyyy-MM-dd HH:mm')}"></td>
-    </tr>
-    </tbody>
-</table>
+<!-- 🔹 Таблиця історії рухів -->
+<div class="card">
+    <h2>Історія рухів товарів</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Товар</th>
+            <th>Кількість</th>
+            <th>Тип руху</th>
+            <th>Локація</th>
+            <th>Дата</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="m : ${movements}">
+            <td th:text="${m.movement_id}"></td>
+            <td th:text="${m.item.name}"></td>
+            <td th:text="${m.quantity}"></td>
+            <td th:text="${m.movement_type}"></td>
+            <td th:text="${m.location != null ? m.location.rack + '-' + m.location.level + '-' + m.location.position : '-'}"></td>
+            <td th:text="${#temporals.format(m.date, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
-<!-- ⚙️ JS для типів руху -->
+<!-- ⚙️ Скрипти -->
 <script>
-    const typeSelect = document.querySelector("[name='movement_type']");
-    const transferFields = document.getElementById("transferFields");
-    const singleLocation = document.getElementById("singleLocation");
+    document.addEventListener("DOMContentLoaded", () => {
+        const typeSelect = document.getElementById("movementType");
+        const transferFields = document.getElementById("transferFields");
+        const singleLocation = document.getElementById("singleLocation");
 
-    function updateVisibility() {
-        if (!typeSelect) return;
-        if (typeSelect.value === "TRANSFER") {
-            transferFields.style.display = "block";
-            singleLocation.style.display = "none";
-        } else {
-            transferFields.style.display = "none";
-            singleLocation.style.display = "block";
+        function updateVisibility() {
+            if (!typeSelect) return;
+            if (typeSelect.value === "TRANSFER") {
+                transferFields.style.display = "block";
+                singleLocation.style.display = "none";
+            } else {
+                transferFields.style.display = "none";
+                singleLocation.style.display = "block";
+            }
         }
-    }
 
-    if (typeSelect) {
-        typeSelect.addEventListener("change", updateVisibility);
-        updateVisibility();
-    }
+        if (typeSelect) {
+            typeSelect.addEventListener("change", updateVisibility);
+            updateVisibility();
+        }
+
+        // ⏳ Автоматичне зникнення повідомлень
+        const alerts = document.querySelectorAll('.message');
+        alerts.forEach(alert => {
+            setTimeout(() => alert.classList.add('fade-out'), 3000);
+            setTimeout(() => alert.remove(), 4000);
+        });
+
+        // 🔗 Прибрати параметри з URL
+        if (window.location.search) {
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+    });
 </script>
 
 </body>
