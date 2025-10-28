@@ -3,55 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Панель менеджера</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 30px;
-        }
-        h1 { color: #333; }
-        button {
-            padding: 10px 15px;
-            margin: 5px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        button:hover { background-color: #45a049; }
-        .card {
-            background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
-<h1>📦 Панель менеджера</h1>
+<h1>Панель менеджера</h1>
 
+<!-- 🔹 Основні блоки -->
 <div class="card">
     <h2>Керування складом</h2>
-    <a href="/manager/items"><button>📦 Товари</button></a>
-    <a href="/manager/reorder"><button>⚙️ Мінімальні залишки</button></a>
-    <a href="/manager/inventory"><button>📊 Залишки товарів</button></a>
-    <a href="/manager/movements"><button>🚚 Рух товарів</button></a>
+    <div class="button-bar">
+        <a href="/manager/items"><button class="second">Товари</button></a>
+        <a href="/manager/locations"><button class="second">Локації складу</button></a>
+        <a href="/manager/reorder"><button class="second">Мінімальні залишки</button></a>
+    </div>
 </div>
 
 <div class="card">
     <h2>Керування постачальниками</h2>
-    <a href="/manager/suppliers"><button>🏭 Постачальники</button></a>
+    <div class="button-bar">
+        <a href="/manager/suppliers"><button class="second">Постачальники</button></a>
+    </div>
 </div>
 
 <div class="card">
-    <h2>Керування локаціями складу</h2>
-    <a href="/manager/locations"><button>🗂 Локації складу</button></a>
+    <h2>Аналіз</h2>
+    <div class="button-bar">
+        <a href="/manager/inventory"><button class="second">Товари на складі</button></a>
+        <a href="/manager/movements"><button class="second">Рух товарів</button></a>
+    </div>
 </div>
 
-<a href="/logout"><button style="background:#d9534f;">🚪 Вийти</button></a>
-
+<!-- 🔹 Кнопка виходу -->
+<div class="button-bar">
+    <a href="/logout"><button class="danger">Вийти</button></a>
+</div>
 </body>
 </html>
