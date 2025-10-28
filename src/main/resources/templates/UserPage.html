@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Користувачі</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<h1>👥 Керування користувачами</h1>
+
+<!-- 🔹 Кнопки разом -->
+<div class="button-bar">
+    <a href="/admin"><button class="first">⬅ Назад</button></a>
+    <button id="toggleAddBtn" class="second">➕ Додати користувача</button>
+    <button id="toggleEditBtn" class="second">✏ Редагувати користувача</button>
+</div>
+
+<!-- Повідомлення -->
+<div th:if="${param.success}" class="message success">Користувача додано!</div>
+<div th:if="${param.updated}" class="message updated">Користувача оновлено!</div>
+<div th:if="${param.deleted}" class="message deleted">Користувача видалено!</div>
+
+<!-- 🔹 Форма додавання -->
+<div id="addForm" class="card hidden">
+    <h2>Додати користувача</h2>
+    <form th:action="@{/admin/user/add}" th:object="${newUser}" method="post">
+        <input type="text" th:field="*{username}" placeholder="Ім’я користувача" required>
+        <input type="password" th:field="*{password}" placeholder="Пароль" required>
+        <input type="text" th:field="*{full_name}" placeholder="Повне ім’я">
+        <input type="email" th:field="*{email}" placeholder="Електронна пошта">
+        <select th:field="*{roleUser}" required>
+            <option value="">— Оберіть роль —</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="MANAGER">MANAGER</option>
+            <option value="OPERATOR">OPERATOR</option>
+        </select>
+        <button type="submit">✅ Додати</button>
+    </form>
+</div>
+
+<!-- 🔹 Форма редагування -->
+<div id="editForm" class="card hidden">
+    <h2>Редагувати користувача</h2>
+
+    <!-- Вибір користувача зі списку -->
+    <label for="userSelect">Оберіть користувача:</label>
+    <select id="userSelect">
+        <option value="">— Оберіть зі списку —</option>
+        <option th:each="u : ${users}"
+                th:value="${u.user_id}"
+                th:text="${u.username}"></option>
+    </select>
+
+    <!-- Форма оновлення (спочатку прихована) -->
+    <form id="userEditForm" class="hidden"
+          th:action="@{/admin/user/update/__ID__}"
+          th:object="${editUser}" method="post">
+
+        <input type="hidden" name="user_id" id="edit_id">
+        <input type="text" id="edit_username" name="username" placeholder="Ім’я користувача" required>
+        <input type="text" id="edit_full_name" name="full_name" placeholder="Повне ім’я">
+        <input type="email" id="edit_email" name="email" placeholder="Електронна пошта">
+        <select id="edit_roleUser" name="roleUser" required>
+            <option value="">— Оберіть роль —</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="MANAGER">MANAGER</option>
+            <option value="OPERATOR">OPERATOR</option>
+        </select>
+        <button type="submit">💾 Оновити</button>
+    </form>
+</div>
+
+<!-- 🔹 Таблиця користувачів -->
+<div id="usersTable" class="card">
+    <h2>📋 Список користувачів</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ім’я користувача</th>
+            <th>Повне ім’я</th>
+            <th>Email</th>
+            <th>Роль</th>
+            <th>Дії</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${users}">
+            <td th:text="${u.user_id}"></td>
+            <td th:text="${u.username}"></td>
+            <td th:text="${u.full_name}"></td>
+            <td th:text="${u.email}"></td>
+            <td th:text="${u.roleUser}"></td>
+            <td>
+                <a th:href="@{'/admin/user/delete/' + ${u.user_id}}"
+                   onclick="return confirm('Видалити цього користувача?');">Видалити</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 🔹 Кнопка виходу -->
+<a href="/logout"><button class="logout-btn">🚪 Вийти</button></a>
+
+<!-- 🔹 JS для логіки відкриття форм -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const addBtn = document.getElementById('toggleAddBtn');
+        const editBtn = document.getElementById('toggleEditBtn');
+        const addForm = document.getElementById('addForm');
+        const editForm = document.getElementById('editForm');
+        const userSelect = document.getElementById('userSelect');
+        const userEditForm = document.getElementById('userEditForm');
+
+        /* === КНОПКА ДОДАВАННЯ === */
+        if (addBtn && addForm) {
+            addBtn.addEventListener('click', () => {
+                const hidden = addForm.classList.toggle('hidden');
+                addBtn.textContent = hidden ? '➕ Додати користувача' : '▲ Закрити форму';
+                if (!hidden && editForm && !editForm.classList.contains('hidden')) {
+                    editForm.classList.add('hidden');
+                    editBtn.textContent = '✏ Редагувати користувача';
+                }
+            });
+        }
+
+        /* === КНОПКА РЕДАГУВАННЯ === */
+        if (editBtn && editForm) {
+            editBtn.addEventListener('click', () => {
+                const hidden = editForm.classList.toggle('hidden');
+                editBtn.textContent = hidden ? '✏ Редагувати користувача' : '▲ Закрити форму';
+                if (!hidden && addForm && !addForm.classList.contains('hidden')) {
+                    addForm.classList.add('hidden');
+                    addBtn.textContent = '➕ Додати користувача';
+                }
+            });
+        }
+
+        /* === ВИБІР КОРИСТУВАЧА ДЛЯ РЕДАГУВАННЯ === */
+        if (userSelect) {
+            userSelect.addEventListener('change', async () => {
+                const id = userSelect.value;
+                if (!id) {
+                    userEditForm.classList.add('hidden');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/admin/user/get/${id}`);
+                    if (!response.ok) throw new Error("Не вдалося отримати дані користувача");
+                    const user = await response.json();
+
+                    document.getElementById('edit_id').value = user.user_id;
+                    document.getElementById('edit_username').value = user.username;
+                    document.getElementById('edit_full_name').value = user.full_name || '';
+                    document.getElementById('edit_email').value = user.email || '';
+                    document.getElementById('edit_roleUser').value = user.roleUser || '';
+
+                    userEditForm.action = `/admin/user/update/${user.user_id}`;
+                    userEditForm.classList.remove('hidden');
+                } catch (err) {
+                    alert("Помилка при отриманні даних користувача!");
+                    console.error(err);
+                }
+            });
+        }
+
+        /* === АВТОМАТИЧНЕ ЗНИКНЕННЯ ПОВІДОМЛЕНЬ === */
+        const alerts = document.querySelectorAll('.msg, .alert, .message');
+        alerts.forEach(alert => {
+            setTimeout(() => alert.classList.add('fade-out'), 3000);
+            setTimeout(() => alert.remove(), 4000);
+        });
+
+        /* === Прибираємо параметри з URL після завантаження === */
+        if (window.location.search) {
+            const url = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, url);
+        }
+    });
+</script>
+
+</body>
+</html>
