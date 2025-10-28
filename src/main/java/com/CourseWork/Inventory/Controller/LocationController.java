@@ -1,6 +1,5 @@
 package com.CourseWork.Inventory.Controller;
 
-import com.CourseWork.Inventory.Model.Item;
 import com.CourseWork.Inventory.Model.Location;
 import com.CourseWork.Inventory.Service.LocationService;
 import org.springframework.stereotype.Controller;
@@ -22,7 +21,7 @@ public class LocationController {
     public String viewLocations(Model model) {
         model.addAttribute("locations", locationService.getAllLocations());
         model.addAttribute("newLocation", new Location());
-        return "LocationsPage";
+        return "LocationPage";
     }
 
     // Додавання нової локації
@@ -43,7 +42,7 @@ public class LocationController {
     public String editLocation(@PathVariable Integer id, Model model) {
         model.addAttribute("locations", locationService.getAllLocations());
         model.addAttribute("editLocation", locationService.getLocationById(id));
-        return "LocationsPage";
+        return "LocationPage";
     }
 
     // Оновлення

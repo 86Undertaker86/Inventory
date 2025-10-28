@@ -35,7 +35,7 @@ public class StockMovementController {
         model.addAttribute("items", itemRepo.findAll());
         model.addAttribute("locations", locationRepo.findAll());
         model.addAttribute("movements", stockMovementService.getAllMovements());
-        return "MovementsPage";
+        return "MovementPage";
     }
 
     @GetMapping("/operator/movements")
@@ -45,7 +45,7 @@ public class StockMovementController {
         model.addAttribute("items", itemRepo.findAll());
         model.addAttribute("locations", locationRepo.findAll());
         model.addAttribute("movements", stockMovementService.getAllMovements());
-        return "MovementsPage";
+        return "MovementPage";
     }
 
     // 🔁 Реєстрація руху товару
@@ -65,7 +65,7 @@ public class StockMovementController {
             model.addAttribute("items", itemRepo.findAll());
             model.addAttribute("locations", locationRepo.findAll());
             model.addAttribute("movements", stockMovementService.getAllMovements());
-            return "MovementsPage";
+            return "MovementPage";
         }
     }
 }

@@ -36,7 +36,7 @@ public class WarehouseOperatorController {
         model.addAttribute("items", itemRepo.findAll());
         model.addAttribute("locations", locationRepo.findAll());
         model.addAttribute("movements", stockMovementService.getAllMovements());
-        return "MovementsPage";
+        return "MovementPage";
     }
 
     // 🔁 Реєстрація руху товару
@@ -56,7 +56,7 @@ public class WarehouseOperatorController {
             model.addAttribute("items", itemRepo.findAll());
             model.addAttribute("locations", locationRepo.findAll());
             model.addAttribute("movements", stockMovementService.getAllMovements());
-            return "MovementsPage";
+            return "MovementPage";
         }
     }
 }

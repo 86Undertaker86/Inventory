@@ -21,7 +21,7 @@ public class SupplierController {
     public String viewSuppliers(Model model) {
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
         model.addAttribute("newSupplier", new Supplier());
-        return "SuppliersPage";
+        return "SupplierPage";
     }
 
     // Додавання нового постачальника
@@ -42,7 +42,7 @@ public class SupplierController {
     public String editSupplier(@PathVariable Integer id, Model model) {
         model.addAttribute("suppliers", supplierService.getAllSuppliers());
         model.addAttribute("editSupplier", supplierService.getSupplierById(id));
-        return "SuppliersPage";
+        return "SupplierPage";
     }
 
     // Оновлення

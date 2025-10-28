@@ -25,7 +25,7 @@ public class ItemController {
         model.addAttribute("items", itemService.getAllItems());
         model.addAttribute("newItem", new Item());
         model.addAttribute("suppliers", supplierRepository.findAll()); // 👈 додай це
-        return "ItemsPage";
+        return "ItemPage";
     }
 
     // Додавання нового товару
@@ -52,7 +52,7 @@ public class ItemController {
         model.addAttribute("editItem", item);
         model.addAttribute("items", itemService.getAllItems());
         model.addAttribute("suppliers", supplierRepository.findAll()); // Додаємо список постачальників
-        return "ItemsPage";
+        return "ItemPage";
     }
 
     // Збереження змін
