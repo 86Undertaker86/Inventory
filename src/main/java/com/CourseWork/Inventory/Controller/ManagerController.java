@@ -22,7 +22,7 @@ public class ManagerController {
     public String showMovementsForManager(Model model) {
         model.addAttribute("role", "MANAGER");
         model.addAttribute("movements", stockService.getAllMovements());
-        return "MovementsPage";
+        return "ManagerPage";
     }
 
     // Реєстрація нового руху
