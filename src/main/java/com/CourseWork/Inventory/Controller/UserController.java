@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/admin/user")
+@RequestMapping("/admin/users")
 public class UserController {
     private final UserService userService;
 
@@ -28,7 +28,7 @@ public class UserController {
     @PostMapping("/add")
     public String addUser(@ModelAttribute("newUser") User user) {
         userService.createUser(user);
-        return "redirect:/admin/user?success";
+        return "redirect:/admin/users?success";
     }
 
     @GetMapping("/get/{id}")
@@ -50,13 +50,13 @@ public class UserController {
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable Integer id, @ModelAttribute("editUser") User updatedUser) {
         userService.updateUser(id, updatedUser);
-        return "redirect:/admin/user?updated";
+        return "redirect:/admin/users?updated";
     }
 
     // Видалення користувача
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
-        return "redirect:/admin/user?deleted";
+        return "redirect:/admin/users?deleted";
     }
 }
