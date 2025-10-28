@@ -47,19 +47,19 @@
 
 <h1>Рух товарів</h1>
 
-<!-- ✅ Показуємо повідомлення про успішне додавання -->
+<!-- ✅ Повідомлення -->
 <div th:if="${param.success}" class="msg success">✅ Рух товару успішно зареєстровано!</div>
-
-<!-- ✅ Показуємо помилку -->
 <div th:if="${error}" class="msg error">
     ⚠️ <span th:text="${error}"></span>
 </div>
 
-<!-- 🔹 Форма для комірника (не відображається для менеджера) -->
+<!-- 🔹 Форма тільки для ОПЕРАТОРА -->
 <div th:if="${role == 'OPERATOR'}">
 
-    <a href="/manager"><button type="button">⬅ Назад</button></a>
+    <!-- кнопка назад -->
+    <a href="/operator"><button type="button">⬅ Назад</button></a>
 
+    <!-- форма -->
     <form th:action="@{/operator/add}" th:object="${movement}" method="post">
 
         <label>Товар:</label><br>
@@ -89,7 +89,7 @@
             </select><br><br>
         </div>
 
-        <!-- 🔹 Локація для IN / OUT -->
+        <!-- 🔹 Для IN / OUT -->
         <div id="singleLocation">
             <label>Локація (стелаж / рівень / полиця):</label><br>
             <select name="location" required>
@@ -105,7 +105,7 @@
     </form>
 </div>
 
-<!-- 📊 Таблиця історії рухів (загальна для всіх) -->
+<!-- 📊 Таблиця історії рухів -->
 <h2>Історія рухів товарів</h2>
 <table>
     <thead>
@@ -124,27 +124,26 @@
         <td th:text="${m.item.name}"></td>
         <td th:text="${m.quantity}"></td>
         <td th:text="${m.movement_type}"></td>
-        <td th:text="${m.location.rack + '-' + m.location.level + '-' + m.location.position}"></td>
+        <td th:text="${m.location != null ? m.location.rack + '-' + m.location.level + '-' + m.location.position : '-'}"></td>
         <td th:text="${#temporals.format(m.date, 'yyyy-MM-dd HH:mm')}"></td>
     </tr>
     </tbody>
 </table>
 
-<!-- ⚙️ JS для динамічних полів -->
+<!-- ⚙️ JS для типів руху -->
 <script>
     const typeSelect = document.querySelector("[name='movement_type']");
     const transferFields = document.getElementById("transferFields");
     const singleLocation = document.getElementById("singleLocation");
 
     function updateVisibility() {
-        if (typeSelect && transferFields && singleLocation) {
-            if (typeSelect.value === "TRANSFER") {
-                transferFields.style.display = "block";
-                singleLocation.style.display = "none";
-            } else {
-                transferFields.style.display = "none";
-                singleLocation.style.display = "block";
-            }
+        if (!typeSelect) return;
+        if (typeSelect.value === "TRANSFER") {
+            transferFields.style.display = "block";
+            singleLocation.style.display = "none";
+        } else {
+            transferFields.style.display = "none";
+            singleLocation.style.display = "block";
         }
     }
 
