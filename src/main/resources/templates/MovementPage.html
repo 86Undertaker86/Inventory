@@ -18,7 +18,7 @@
 </div>
 
 <!-- 🔹 Повідомлення -->
-<div th:if="${param.success}" class="message success">✅ Рух товару успішно зареєстровано!</div>
+<div th:if="${param.success}" class="message success">Рух товару успішно зареєстровано!</div>
 <div th:if="${error}" class="message error">
     ⚠️ <span th:text="${error}"></span>
 </div>
@@ -28,15 +28,13 @@
     <h2>Зареєструвати рух товару</h2>
     <form th:action="@{/add}" th:object="${movement}" method="post">
 
-        <label>Товар:</label>
         <select th:field="*{item}" required>
             <option value="">— Оберіть товар —</option>
             <option th:each="i : ${items}" th:value="${i.item_id}" th:text="${i.name}"></option>
         </select>
 
-        <label>Тип руху:</label>
         <select name="movement_type" th:field="*{movement_type}" required id="movementType">
-            <option value="">— Оберіть тип —</option>
+            <option value="">— Оберіть тип руху —</option>
             <option value="IN">Прихід (оприбуткування)</option>
             <option value="OUT">Видаток (списання)</option>
             <option value="TRANSFER">Переміщення</option>
@@ -44,16 +42,14 @@
 
         <!-- 🔁 Поля для переміщення -->
         <div id="transferFields" style="display:none;">
-            <label>Звідки перемістити:</label>
             <select name="fromLocation">
-                <option value="">— Оберіть —</option>
+                <option value="">— Оберіть звідки перемістити —</option>
                 <option th:each="loc : ${locations}" th:value="${loc.location_id}"
                         th:text="${loc.rack + '-' + loc.level + '-' + loc.position}"></option>
             </select>
 
-            <label>Куди перемістити:</label>
             <select name="toLocation">
-                <option value="">— Оберіть —</option>
+                <option value="">— Оберіть куди перемістити —</option>
                 <option th:each="loc : ${locations}" th:value="${loc.location_id}"
                         th:text="${loc.rack + '-' + loc.level + '-' + loc.position}"></option>
             </select>
@@ -61,16 +57,14 @@
 
         <!-- 📦 Для IN / OUT -->
         <div id="singleLocation">
-            <label>Локація (стелаж / рівень / полиця):</label>
             <select name="location">
-                <option value="">— Оберіть —</option>
+                <option value="">— Оберіть локацію —</option>
                 <option th:each="l : ${locations}" th:value="${l.location_id}"
                         th:text="${l.rack + '-' + l.level + '-' + l.position}"></option>
             </select>
         </div>
 
-        <label>Кількість:</label>
-        <input type="number" th:field="*{quantity}" min="1" required>
+        <input type="number" th:field="*{quantity}" placeholder="Кількість"  min="1" required>
 
         <button type="submit" class="second">💾 Зареєструвати рух</button>
     </form>

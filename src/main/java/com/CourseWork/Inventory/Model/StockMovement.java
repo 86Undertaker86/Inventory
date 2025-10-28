@@ -19,7 +19,7 @@ public class StockMovement {
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
-    private int quantity;
+    private Integer quantity;
 
     @Enumerated(EnumType.STRING)
     private MovementType movement_type;
