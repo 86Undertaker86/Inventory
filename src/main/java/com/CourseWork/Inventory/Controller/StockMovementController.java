@@ -35,9 +35,9 @@ public class StockMovementController {
         return "MovementPage";
     }
 
-    @GetMapping("/operator/movements")
+    @GetMapping("/loader/movements")
     public String showOperatorMovements(Model model) {
-        model.addAttribute("role", "OPERATOR");
+        model.addAttribute("role", "LOADER");
         model.addAttribute("movement", new StockMovement());
         model.addAttribute("items", itemRepo.findAll());
         model.addAttribute("locations", locationRepo.findAll());
@@ -55,7 +55,7 @@ public class StockMovementController {
                               Model model) {
         try {
             operatorService.processMovement(movement, itemId, fromId, toId, singleLocationId);
-            return "redirect:/operator?success";
+            return "redirect:/loader?success";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("movement", new StockMovement());

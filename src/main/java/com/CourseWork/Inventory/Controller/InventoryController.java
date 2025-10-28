@@ -21,10 +21,10 @@ public class InventoryController {
         return "InventoryPage";
     }
 
-    @GetMapping("/operator/inventory")
-    public String showOperatorInventory(Model model) {
+    @GetMapping("/loader/inventory")
+    public String showLoaderInventory(Model model) {
         model.addAttribute("inventories", inventoryService.getAllInventories());
-        model.addAttribute("role", "OPERATOR"); // 👈 додаємо роль
+        model.addAttribute("role", "LOADER"); // 👈 додаємо роль
         return "InventoryPage";
     }
 }

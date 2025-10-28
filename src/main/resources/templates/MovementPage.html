@@ -10,10 +10,10 @@
 <h1>Рух товарів</h1>
 
 <!-- 🔹 Кнопки управління -->
-<div class="button-bar" th:if="${role == 'OPERATOR'}">
-    <a href="/operator"><button class="first">⬅ Назад</button></a>
+<div class="button-bar" th:if="${role == 'LOADER'}">
+    <a href="/loader"><button class="first">⬅ Назад</button></a>
 </div>
-<div class="button-bar" th:if="${role != 'OPERATOR'}">
+<div class="button-bar" th:if="${role == 'MANAGER'}">
     <a href="/manager"><button class="first">⬅ Назад</button></a>
 </div>
 
@@ -24,7 +24,7 @@
 </div>
 
 <!-- 🔹 Форма руху (лише для оператора) -->
-<div th:if="${role == 'OPERATOR'}" id="movementForm" class="card">
+<div th:if="${role == 'LOADER'}" id="movementForm" class="card">
     <h2>Зареєструвати рух товару</h2>
     <form th:action="@{/add}" th:object="${movement}" method="post">
 
