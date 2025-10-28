@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель вантажника</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<h1>Панель вантажника</h1>
+
+<!-- 🔹 Основні блоки -->
+<div class="card">
+    <h2>Керування складом</h2>
+    <div class="button-bar">
+        <a href="/operator/inventory"><button class="second">Товари на складі</button></a>
+        <a href="/operator/movements"><button class="second">Рух товарів</button></a>
+    </div>
+</div>
+
+<!-- 🔹 Кнопка виходу -->
+<div class="button-bar">
+    <a href="/logout"><button class="danger">Вийти</button></a>
+</div>
+</body>
+</html>
