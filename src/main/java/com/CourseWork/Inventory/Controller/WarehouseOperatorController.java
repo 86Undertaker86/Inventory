@@ -4,7 +4,6 @@ import com.CourseWork.Inventory.Model.StockMovement;
 import com.CourseWork.Inventory.Service.WarehouseOperatorService;
 import com.CourseWork.Inventory.Repository.ItemRepository;
 import com.CourseWork.Inventory.Repository.LocationRepository;
-import com.CourseWork.Inventory.Service.InventoryService;
 import com.CourseWork.Inventory.Service.StockMovementService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,18 +17,15 @@ public class WarehouseOperatorController {
     private final ItemRepository itemRepo;
     private final LocationRepository locationRepo;
     private final StockMovementService stockMovementService;
-    private final InventoryService inventoryService;
 
     public WarehouseOperatorController(WarehouseOperatorService operatorService,
                                        ItemRepository itemRepo,
                                        LocationRepository locationRepo,
-                                       StockMovementService stockMovementService,
-                                       InventoryService inventoryService) {
+                                       StockMovementService stockMovementService) {
         this.operatorService = operatorService;
         this.itemRepo = itemRepo;
         this.locationRepo = locationRepo;
         this.stockMovementService = stockMovementService;
-        this.inventoryService = inventoryService;
     }
 
     // 📦 Головна сторінка комірника
@@ -62,12 +58,5 @@ public class WarehouseOperatorController {
             model.addAttribute("movements", stockMovementService.getAllMovements());
             return "MovementsPage";
         }
-    }
-
-    // 🧾 Перегляд залишків
-    @GetMapping("/inventory")
-    public String viewInventory(Model model) {
-        model.addAttribute("inventories", inventoryService.getAllInventories());
-        return "InventoryPage";
     }
 }
