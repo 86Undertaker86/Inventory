@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Мінімальні залишки</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<h1>Контроль мінімальних залишків</h1>
+
+<!-- Панель кнопок -->
+<div class="button-bar">
+    <a href="/manager"><button class="first">⬅ Назад</button></a>
+</div>
+
+<!-- Таблиця -->
+<div class="card">
+    <h2>Стан запасів</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Назва товару</th>
+            <th>Постачальник</th>
+            <th>Кількість на складі</th>
+            <th>Мінімальний рівень</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="r : ${reorders}" th:classappend="${r.quantity < r.item.min_level} ? 'low-stock'">
+            <td th:text="${r.inventory_id}"></td>
+            <td th:text="${r.item.name}"></td>
+            <td th:text="${r.item.supplier.name_company}"></td>
+            <td th:text="${r.quantity}"></td>
+            <td th:text="${r.item.min_level}"></td>
+        </tr>
+
+        <!-- Якщо немає даних -->
+        <tr th:if="${#lists.isEmpty(reorders)}">
+            <td colspan="5" class="no-data">Даних не знайдено</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Автоматичне очищення URL -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        if (window.location.search) {
+            const url = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, url);
+        }
+    });
+</script>
+
+</body>
+</html>

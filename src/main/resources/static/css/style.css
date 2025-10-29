@@ -101,6 +101,13 @@ table tbody tr:last-child td:last-child {
     border-bottom-right-radius: var(--radius);
 }
 
+/* === Підсвічування рядків, де запас нижче мінімального === */
+tr.low-stock td {
+    background-color: #fff4cc !important; /* теплий жовтий */
+    color: #b22222; /* самурайський червоний */
+    font-weight: 600;
+}
+
 /* Кнопки */
 button {
     background-color: var(--accent-color);
