@@ -10,17 +10,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class WarehouseOperatorService {
+public class LoaderService {
 
     private final MovementService movementService;
     private final InventoryService inventoryService;
     private final ItemRepository itemRepository;
     private final LocationRepository locationRepository;
 
-    public WarehouseOperatorService(MovementService movementService,
-                                    InventoryService inventoryService,
-                                    ItemRepository itemRepository,
-                                    LocationRepository locationRepository) {
+    public LoaderService(MovementService movementService,
+                         InventoryService inventoryService,
+                         ItemRepository itemRepository,
+                         LocationRepository locationRepository) {
         this.movementService = movementService;
         this.inventoryService = inventoryService;
         this.itemRepository = itemRepository;

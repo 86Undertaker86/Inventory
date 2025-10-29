@@ -1,7 +1,7 @@
 package com.CourseWork.Inventory.Controller;
 
 import com.CourseWork.Inventory.Model.Movement;
-import com.CourseWork.Inventory.Service.WarehouseOperatorService;
+import com.CourseWork.Inventory.Service.LoaderService;
 import com.CourseWork.Inventory.Repository.ItemRepository;
 import com.CourseWork.Inventory.Repository.LocationRepository;
 import com.CourseWork.Inventory.Service.MovementService;
@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class MovementController {
 
-    private final WarehouseOperatorService operatorService;
+    private final LoaderService operatorService;
     private final ItemRepository itemRepo;
     private final LocationRepository locationRepo;
     private final MovementService movementService;
 
-    public MovementController(WarehouseOperatorService operatorService,
+    public MovementController(LoaderService operatorService,
                               ItemRepository itemRepo,
                               LocationRepository locationRepo,
                               MovementService movementService) {
