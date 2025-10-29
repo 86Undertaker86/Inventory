@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Вхід — Inventory</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Inventory</h1>
+
+    <div th:if="${errorMessage}" class="message error">
+        <p th:text="${errorMessage}"></p>
+    </div>
+
+    <form th:action="@{/login}" method="post" class="card">
+        <label for="username">Користувач</label>
+        <input id="username" name="username" type="text" placeholder="Введіть логін" required autofocus />
+
+        <label for="password">Пароль</label>
+        <input id="password" name="password" type="password" placeholder="Введіть пароль" required />
+
+        <label for="login_roleUser">Роль</label>
+        <select id="login_roleUser" name="roleUser" required>
+            <option value="">— Оберіть роль —</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="MANAGER">MANAGER</option>
+            <option value="LOADER">LOADER</option>
+        </select>
+
+        <button type="submit" class="btn primary">Увійти</button>
+    </form>
+</div>
+
+<!-- Невеликий скрипт для фокусування та зручності -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        /* === АВТОМАТИЧНЕ ЗНИКНЕННЯ ПОВІДОМЛЕНЬ === */
+        const alerts = document.querySelectorAll('.msg, .alert, .message');
+        alerts.forEach(alert => {
+            setTimeout(() => alert.classList.add('fade-out'), 3000);
+            setTimeout(() => alert.remove(), 4000);
+        });
+
+        /* === 3. Прибираємо параметри з URL після завантаження === */
+        if (window.location.search) {
+            const url = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, url);
+        }
+    });
+</script>
+</body>
+</html>
