@@ -62,6 +62,7 @@ public class MovementController {
             model.addAttribute("items", itemRepo.findAll());
             model.addAttribute("locations", locationRepo.findAll());
             model.addAttribute("movements", movementService.getAllMovements());
+            model.addAttribute("role", "LOADER");
             return "MovementPage";
         }
     }
