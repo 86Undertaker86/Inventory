@@ -25,6 +25,7 @@
             <th>Постачальник</th>
             <th>Кількість на складі</th>
             <th>Мінімальний рівень</th>
+            <th>Дія</th>
         </tr>
         </thead>
         <tbody>
@@ -34,6 +35,9 @@
             <td th:text="${r.item.supplier.name_company}"></td>
             <td th:text="${r.quantity}"></td>
             <td th:text="${r.item.min_level}"></td>
+            <td>
+                <a th:href="@{/manager/reorder/push}">Поповнити</a>
+            </td>
         </tr>
 
         <!-- Якщо немає даних -->

@@ -21,4 +21,11 @@ public class ReorderRuleController {
         model.addAttribute("reorders", reorderRuleService.getLowStockInventories());
         return "ReorderPage";
     }
+
+    @GetMapping("/push")
+    public String pushReorder() {
+        System.out.println("Повідомлення направлено постачальнику");
+
+        return "redirect:/manager/reorder?success";
+    }
 }
