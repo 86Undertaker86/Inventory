@@ -4,7 +4,6 @@ import com.CourseWork.Inventory.Model.Inventory;
 import com.CourseWork.Inventory.Repository.InventoryRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReorderRuleService {
