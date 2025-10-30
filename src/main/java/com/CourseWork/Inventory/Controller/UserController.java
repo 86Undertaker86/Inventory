@@ -1,6 +1,5 @@
 package com.CourseWork.Inventory.Controller;
 
-import com.CourseWork.Inventory.Model.Item;
 import com.CourseWork.Inventory.Model.User;
 import com.CourseWork.Inventory.Service.UserService;
 import org.springframework.stereotype.Controller;
