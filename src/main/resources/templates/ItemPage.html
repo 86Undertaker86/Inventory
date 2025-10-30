@@ -30,12 +30,12 @@
         <input type="text" th:field="*{name}" placeholder="Назва товару" required>
         <textarea th:field="*{description}" placeholder="Опис"></textarea>
 
-        <select th:field="*{supplier}">
+        <select th:field="*{supplier}" required>
             <option value="">— Оберіть постачальника —</option>
             <option th:each="s : ${suppliers}" th:value="${s.supplier_id}" th:text="${s.name_company}"></option>
         </select>
 
-        <input type="number" th:field="*{min_level}" placeholder="Мінімальний рівень" min="0" required>
+        <input type="number" th:field="*{min_level}" placeholder="Мінімальний рівень" min="1" required>
         <input type="number" th:field="*{max_level}" placeholder="Максимальний рівень" min="0" required>
 
         <button type="submit">Додати</button>
@@ -71,7 +71,7 @@
         </select>
 
         <input type="number" id="edit_min_level" name="min_level" placeholder="Мінімальний рівень" min="0" required>
-        <input type="number" id="edit_max_level" name="max_level" placeholder="Максимальний рівень" min="0" required>
+        <input type="number" id="edit_max_level" name="max_level" placeholder="Максимальний рівень" max="0" required>
 
         <button type="submit">Оновити</button>
     </form>

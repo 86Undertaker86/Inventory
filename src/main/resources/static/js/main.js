@@ -122,4 +122,44 @@ document.addEventListener("DOMContentLoaded", () => {
         updateVisibility();
     }
 
+    /* === ✅ Валідація рівнів (мінімальний ≤ максимальний) === */
+    document.querySelectorAll('form').forEach(form => {
+        const minInput = form.querySelector('input[name="min_level"]');
+        const maxInput = form.querySelector('input[name="max_level"]');
+
+        if (!minInput || !maxInput) return;
+
+        // задаємо мінімальні допустимі значення
+        if (!minInput.hasAttribute('min')) minInput.setAttribute('min', '0');
+        if (!maxInput.hasAttribute('min')) maxInput.setAttribute('min', '0');
+
+        function validateLevels(showNow = false) {
+            const min = Number(minInput.value);
+            const max = Number(maxInput.value);
+
+            if (minInput.value === '' || maxInput.value === '') {
+                maxInput.setCustomValidity('');
+                return;
+            }
+
+            if (max < min) {
+                maxInput.setCustomValidity("Максимальний рівень не може бути меншим за мінімальний!");
+            } else {
+                maxInput.setCustomValidity('');
+            }
+
+            if (showNow) maxInput.reportValidity();
+        }
+
+        minInput.addEventListener('input', () => validateLevels(false));
+        maxInput.addEventListener('input', () => validateLevels(false));
+
+        form.addEventListener('submit', (e) => {
+            validateLevels(true);
+            if (maxInput.validationMessage) {
+                e.preventDefault();
+                maxInput.reportValidity();
+            }
+        });
+    });
 });
