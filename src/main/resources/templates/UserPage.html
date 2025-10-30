@@ -24,7 +24,7 @@
 <!-- 🔹 Форма додавання -->
 <div id="addForm" class="card hidden">
     <h2>Додати користувача</h2>
-    <form th:action="@{/admin/user/add}" th:object="${newUser}" method="post">
+    <form th:action="@{/admin/users/add}" th:object="${newUser}" method="post">
         <input type="text" th:field="*{username}" placeholder="Ім’я користувача" required>
         <input type="password" th:field="*{password}" placeholder="Пароль" required>
         <input type="text" th:field="*{full_name}" placeholder="Повне ім’я">
@@ -55,7 +55,7 @@
     <!-- Форма оновлення (спочатку прихована) -->
     <!-- Форма оновлення -->
     <form id="userEditForm" class="hidden"
-          th:action="@{/admin/user/update/__ID__}"
+          th:action="@{/admin/users/update/__ID__}"
           th:object="${editUser}" method="post">
 
         <input type="hidden" name="user_id" id="edit_id">
@@ -95,7 +95,7 @@
             <td th:text="${u.email}"></td>
             <td th:text="${u.roleUser}"></td>
             <td>
-                <a th:href="@{'/admin/user/delete/' + ${u.user_id}}"
+                <a th:href="@{'/admin/users/delete/' + ${u.user_id}}"
                    onclick="return confirm('Видалити цього користувача?');">Видалити</a>
             </td>
         </tr>

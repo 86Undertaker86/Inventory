@@ -2,16 +2,20 @@ package com.CourseWork.Inventory.Service;
 
 import com.CourseWork.Inventory.Model.User;
 import com.CourseWork.Inventory.Repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder; // ✅ додано
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> getAllUsers() {
@@ -22,10 +26,15 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
+    // ✅ Додавання нового користувача з хешуванням паролю
     public void createUser(User user) {
+        if (user.getPassword() != null && !user.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         userRepository.save(user);
     }
 
+    // ✅ Оновлення користувача з хешуванням паролю при зміні
     public void updateUser(Integer id, User updatedUser) {
         User existingUser = userRepository.findById(id).orElse(null);
         if (existingUser != null) {
@@ -34,9 +43,9 @@ public class UserService {
             existingUser.setFull_name(updatedUser.getFull_name());
             existingUser.setEmail(updatedUser.getEmail());
 
-            // ⚙️ Якщо поле пароля не порожнє — оновлюємо
+            // Якщо пароль не порожній — хешуємо новий
             if (updatedUser.getPassword() != null && !updatedUser.getPassword().isBlank()) {
-                existingUser.setPassword(updatedUser.getPassword());
+                existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
             }
 
             userRepository.save(existingUser);
