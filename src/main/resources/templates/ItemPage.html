@@ -106,6 +106,9 @@
                    onclick="return confirm('Видалити товар?');">Видалити</a>
             </td>
         </tr>
+        <tr th:if="${#lists.isEmpty(items)}">
+            <td colspan="7" class="no-data">Даних не знайдено</td>
+        </tr>
         </tbody>
     </table>
 </div>

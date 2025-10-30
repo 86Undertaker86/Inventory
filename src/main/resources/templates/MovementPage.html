@@ -95,6 +95,9 @@
             <td th:text="${m.location != null ? m.location.rack + '-' + m.location.level + '-' + m.location.position : '-'}"></td>
             <td th:text="${#temporals.format(m.date, 'yyyy-MM-dd HH:mm')}"></td>
         </tr>
+        <tr th:if="${#lists.isEmpty(movements)}">
+            <td colspan="6" class="no-data">Даних не знайдено</td>
+        </tr>
         </tbody>
     </table>
 </div>

@@ -41,10 +41,8 @@
                 <a th:href="@{/manager/reorder/push}">Поповнити</a>
             </td>
         </tr>
-
-        <!-- Якщо немає даних -->
         <tr th:if="${#lists.isEmpty(reorders)}">
-            <td colspan="5" class="no-data">Даних не знайдено</td>
+            <td colspan="6" class="no-data">Даних не знайдено</td>
         </tr>
         </tbody>
     </table>

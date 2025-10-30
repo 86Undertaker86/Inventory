@@ -28,7 +28,7 @@ public class LocationController {
     @PostMapping("/add")
     public String addLocation(@ModelAttribute("newLocation") Location location) {
         locationService.saveLocation(location);
-        return "redirect:/admin/locations?success";
+        return "redirect:/manager/locations?success";
     }
 
     @GetMapping("/get/{id}")
@@ -51,13 +51,13 @@ public class LocationController {
                                  @ModelAttribute("editLocation") Location updated) {
         updated.setLocation_id(id);
         locationService.saveLocation(updated);
-        return "redirect:/admin/locations?updated";
+        return "redirect:/manager/locations?updated";
     }
 
     // Видалення
     @GetMapping("/delete/{id}")
     public String deleteLocation(@PathVariable Integer id) {
         locationService.deleteLocation(id);
-        return "redirect:/admin/locations?deleted";
+        return "redirect:/manager/locations?deleted";
     }
 }

@@ -101,6 +101,9 @@
                    onclick="return confirm('Видалити цього користувача?');">Видалити</a>
             </td>
         </tr>
+        <tr th:if="${#lists.isEmpty(users)}">
+            <td colspan="6" class="no-data">Даних не знайдено</td>
+        </tr>
         </tbody>
     </table>
 </div>

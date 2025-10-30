@@ -86,6 +86,9 @@
                    onclick="return confirm('Видалити локацію?');">Видалити</a>
             </td>
         </tr>
+        <tr th:if="${#lists.isEmpty(locations)}">
+            <td colspan="6" class="no-data">Даних не знайдено</td>
+        </tr>
         </tbody>
     </table>
 </div>

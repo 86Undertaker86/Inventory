@@ -92,6 +92,9 @@
                    onclick="return confirm('Видалити постачальника?');">Видалити</a>
             </td>
         </tr>
+        <tr th:if="${#lists.isEmpty(suppliers)}">
+            <td colspan="7" class="no-data">Даних не знайдено</td>
+        </tr>
         </tbody>
     </table>
 </div>

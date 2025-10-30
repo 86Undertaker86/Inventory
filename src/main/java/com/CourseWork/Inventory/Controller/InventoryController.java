@@ -17,14 +17,14 @@ public class InventoryController {
     @GetMapping("/manager/inventory")
     public String showManagerInventory(Model model) {
         model.addAttribute("inventories", inventoryService.getAllInventories());
-        model.addAttribute("role", "MANAGER"); // 👈 додаємо роль
+        model.addAttribute("role", "MANAGER");
         return "InventoryPage";
     }
 
     @GetMapping("/loader/inventory")
     public String showLoaderInventory(Model model) {
         model.addAttribute("inventories", inventoryService.getAllInventories());
-        model.addAttribute("role", "LOADER"); // 👈 додаємо роль
+        model.addAttribute("role", "LOADER");
         return "InventoryPage";
     }
 }
