@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
 
-                editFormEl.action = `/manager/${basePath}s/update/${id}`;
+                editFormEl.action = `${urlPrefix}/${basePath}s/update/${id}`;
                 editFormEl.classList.remove('hidden');
             } catch (err) {
                 alert("Помилка при отриманні даних!");
