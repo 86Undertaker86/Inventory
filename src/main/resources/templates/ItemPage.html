@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Керування товарами</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/main.js}"></script>
 </head>
 <body>
 
@@ -11,15 +12,15 @@
 
 <!-- 🔹 Панель кнопок -->
 <div class="button-bar">
-    <a href="/manager"><button class="first">⬅ Назад</button></a>
-    <button id="toggleAddBtn" class="second">➕ Додати товар</button>
-    <button id="toggleEditBtn" class="second">✏ Редагувати товар</button>
+    <a href="/manager"><button class="first">Назад</button></a>
+    <button id="toggleAddBtn" class="second">Додати товар</button>
+    <button id="toggleEditBtn" class="second">Редагувати товар</button>
 </div>
 
 <!-- 🔹 Повідомлення -->
-<div th:if="${param.success}" class="message success">✅ Товар успішно додано!</div>
-<div th:if="${param.updated}" class="message updated">🔄 Товар оновлено!</div>
-<div th:if="${param.deleted}" class="message deleted">❌ Товар видалено!</div>
+<div th:if="${param.success}" class="message success">Товар успішно додано!</div>
+<div th:if="${param.updated}" class="message updated">Товар оновлено!</div>
+<div th:if="${param.deleted}" class="message deleted">Товар видалено!</div>
 
 <!-- 🔹 Форма додавання -->
 <div id="addForm" class="card hidden">
@@ -79,6 +80,7 @@
 <!-- 🔹 Таблиця товарів -->
 <div id="itemsTable" class="card">
     <h2>Список товарів</h2>
+    <input type="text" id="searchInput" class="search-bar" placeholder="Пошук...">
     <table>
         <thead>
         <tr>
@@ -107,88 +109,5 @@
         </tbody>
     </table>
 </div>
-
-<!-- 🔹 Скрипт керування -->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const addBtn = document.getElementById('toggleAddBtn');
-        const editBtn = document.getElementById('toggleEditBtn');
-        const addForm = document.getElementById('addForm');
-        const editForm = document.getElementById('editForm');
-        const itemSelect = document.getElementById('itemSelect');
-        const itemEditForm = document.getElementById('itemEditForm');
-
-        /* === Кнопка додавання === */
-        if (addBtn && addForm) {
-            addBtn.addEventListener('click', () => {
-                const hidden = addForm.classList.toggle('hidden');
-                addBtn.textContent = hidden ? '➕ Додати товар' : '▲ Закрити форму';
-
-                if (!hidden && editForm && !editForm.classList.contains('hidden')) {
-                    editForm.classList.add('hidden');
-                    if (editBtn) editBtn.textContent = '✏ Редагувати товар';
-                }
-            });
-        }
-
-        /* === Кнопка редагування === */
-        if (editBtn && editForm) {
-            editBtn.addEventListener('click', () => {
-                const hidden = editForm.classList.toggle('hidden');
-                editBtn.textContent = hidden ? '✏ Редагувати товар' : '▲ Закрити форму редагування';
-
-                if (!hidden && addForm && !addForm.classList.contains('hidden')) {
-                    addForm.classList.add('hidden');
-                    if (addBtn) addBtn.textContent = '➕ Додати товар';
-                }
-            });
-        }
-
-        /* === Вибір товару для редагування === */
-        if (itemSelect) {
-            itemSelect.selectedIndex = 0;
-
-            itemSelect.addEventListener('change', async () => {
-                const id = itemSelect.value;
-                if (!id) {
-                    itemEditForm.classList.add('hidden');
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`/manager/items/get/${id}`);
-                    if (!response.ok) throw new Error("Не вдалося отримати дані товару");
-                    const item = await response.json();
-
-                    document.getElementById('edit_id').value = item.item_id;
-                    document.getElementById('edit_name').value = item.name;
-                    document.getElementById('edit_description').value = item.description || '';
-                    document.getElementById('edit_supplier').value = item.supplier ? item.supplier.supplier_id : '';
-                    document.getElementById('edit_min_level').value = item.min_level;
-                    document.getElementById('edit_max_level').value = item.max_level;
-
-                    itemEditForm.action = `/manager/items/update/${item.item_id}`;
-                    itemEditForm.classList.remove('hidden');
-                } catch (err) {
-                    alert("Помилка при отриманні даних товару!");
-                    console.error(err);
-                }
-            });
-        }
-
-        /* === Зникнення повідомлень === */
-        const alerts = document.querySelectorAll('.message');
-        alerts.forEach(alert => {
-            setTimeout(() => alert.classList.add('fade-out'), 3000);
-            setTimeout(() => alert.remove(), 4000);
-        });
-
-        /* === Очищення URL після перезавантаження === */
-        if (window.location.search) {
-            const url = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, url);
-        }
-    });
-</script>
 </body>
 </html>

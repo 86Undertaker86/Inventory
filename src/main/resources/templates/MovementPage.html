@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Рух товарів</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/main.js}"></script>
 </head>
 <body>
 
@@ -11,16 +12,16 @@
 
 <!-- 🔹 Кнопки управління -->
 <div class="button-bar" th:if="${role == 'LOADER'}">
-    <a href="/loader"><button class="first">⬅ Назад</button></a>
+    <a href="/loader"><button class="first">Назад</button></a>
 </div>
 <div class="button-bar" th:if="${role == 'MANAGER'}">
-    <a href="/manager"><button class="first">⬅ Назад</button></a>
+    <a href="/manager"><button class="first">Назад</button></a>
 </div>
 
 <!-- 🔹 Повідомлення -->
 <div th:if="${param.success}" class="message success">Рух товару успішно зареєстровано!</div>
 <div th:if="${error}" class="message error">
-    ⚠️ <span th:text="${error}"></span>
+       <span th:text="${error}"></span>
 </div>
 
 <!-- 🔹 Форма руху (лише для оператора) -->
@@ -66,13 +67,14 @@
 
         <input type="number" th:field="*{quantity}" placeholder="Кількість"  min="1" required>
 
-        <button type="submit" class="second">💾 Зареєструвати рух</button>
+        <button type="submit" class="second">Зареєструвати рух</button>
     </form>
 </div>
 
 <!-- 🔹 Таблиця історії рухів -->
 <div class="card">
     <h2>Історія рухів товарів</h2>
+    <input type="text" id="searchInput" class="search-bar" placeholder="Пошук...">
     <table>
         <thead>
         <tr>
@@ -96,44 +98,5 @@
         </tbody>
     </table>
 </div>
-
-<!-- ⚙️ Скрипти -->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const typeSelect = document.getElementById("movementType");
-        const transferFields = document.getElementById("transferFields");
-        const singleLocation = document.getElementById("singleLocation");
-
-        function updateVisibility() {
-            if (!typeSelect) return;
-            if (typeSelect.value === "TRANSFER") {
-                transferFields.style.display = "block";
-                singleLocation.style.display = "none";
-            } else {
-                transferFields.style.display = "none";
-                singleLocation.style.display = "block";
-            }
-        }
-
-        if (typeSelect) {
-            typeSelect.addEventListener("change", updateVisibility);
-            updateVisibility();
-        }
-
-        // ⏳ Автоматичне зникнення повідомлень
-        const alerts = document.querySelectorAll('.message');
-        alerts.forEach(alert => {
-            setTimeout(() => alert.classList.add('fade-out'), 3000);
-            setTimeout(() => alert.remove(), 4000);
-        });
-
-        // 🔗 Прибрати параметри з URL
-        if (window.location.search) {
-            const cleanUrl = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, cleanUrl);
-        }
-    });
-</script>
-
 </body>
 </html>

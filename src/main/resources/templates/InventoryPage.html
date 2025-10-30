@@ -13,18 +13,19 @@
 <div class="button-bar">
     <!-- Якщо роль MANAGER -->
     <a th:if="${role == 'MANAGER'}" href="/manager">
-        <button class="first">⬅ Назад</button>
+        <button class="first">Назад</button>
     </a>
 
     <!-- Якщо роль OPERATOR -->
     <a th:if="${role == 'LOADER'}" href="/loader">
-        <button class="first">⬅ Назад</button>
+        <button class="first">Назад</button>
     </a>
 </div>
 
 
 <div id="suppliersTable" class="card">
     <h2>Список товарів на складі</h2>
+    <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Пошук...">
     <table>
         <thead>
         <tr>

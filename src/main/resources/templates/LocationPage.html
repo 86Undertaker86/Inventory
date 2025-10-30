@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Керування локаціями</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/main.js}"></script>
 </head>
 <body>
 
@@ -11,9 +12,9 @@
 
 <!-- 🔹 Кнопки -->
 <div class="button-bar">
-    <a href="/manager"><button class="first">⬅ Назад</button></a>
-    <button id="toggleAddBtn" class="second">➕ Додати локацію</button>
-    <button id="toggleEditBtn" class="second">✏ Редагувати локацію</button>
+    <a href="/manager"><button class="first">Назад</button></a>
+    <button id="toggleAddBtn" class="second">Додати локацію</button>
+    <button id="toggleEditBtn" class="second">Редагувати локацію</button>
 </div>
 
 <!-- 🔹 Повідомлення -->
@@ -61,6 +62,7 @@
 <!-- 🔹 Таблиця локацій -->
 <div id="locationsTable" class="card">
     <h2>Список локацій</h2>
+    <input type="text" id="searchInput" class="search-bar" placeholder="Пошук...">
     <table>
         <thead>
         <tr>
@@ -87,90 +89,5 @@
         </tbody>
     </table>
 </div>
-
-<!-- 🔹 Скрипт -->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const addBtn = document.getElementById('toggleAddBtn');
-        const editBtn = document.getElementById('toggleEditBtn');
-        const addForm = document.getElementById('addForm');
-        const editForm = document.getElementById('editForm');
-        const locationSelect = document.getElementById('locationSelect');
-        const locationEditForm = document.getElementById('locationEditForm');
-
-        // === Додавання ===
-        if (addBtn && addForm) {
-            addBtn.addEventListener('click', () => {
-                const hidden = addForm.classList.toggle('hidden');
-                addBtn.textContent = hidden
-                    ? '➕ Додати локацію'
-                    : '▲ Закрити форму';
-                if (!hidden && editForm && !editForm.classList.contains('hidden')) {
-                    editForm.classList.add('hidden');
-                    editBtn.textContent = '✏ Редагувати локацію';
-                }
-            });
-        }
-
-        // === Редагування ===
-        if (editBtn && editForm) {
-            editBtn.addEventListener('click', () => {
-                const hidden = editForm.classList.toggle('hidden');
-                editBtn.textContent = hidden
-                    ? '✏ Редагувати локацію'
-                    : '▲ Закрити форму редагування';
-                if (!hidden && addForm && !addForm.classList.contains('hidden')) {
-                    addForm.classList.add('hidden');
-                    addBtn.textContent = '➕ Додати локацію';
-                }
-            });
-        }
-
-        // === Завантаження локації для редагування ===
-        if (locationSelect) {
-            locationSelect.selectedIndex = 0;
-
-            locationSelect.addEventListener('change', async () => {
-                const id = locationSelect.value;
-                if (!id) {
-                    locationEditForm.classList.add('hidden');
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`/manager/locations/get/${id}`);
-                    if (!response.ok) throw new Error("Не вдалося отримати дані");
-                    const location = await response.json();
-
-                    document.getElementById('edit_id').value = location.location_id;
-                    document.getElementById('edit_rack').value = location.rack;
-                    document.getElementById('edit_level').value = location.level;
-                    document.getElementById('edit_position').value = location.position;
-                    document.getElementById('edit_description').value = location.description || '';
-
-                    locationEditForm.action = `/manager/locations/update/${location.location_id}`;
-                    locationEditForm.classList.remove('hidden');
-                } catch (err) {
-                    alert("Помилка при отриманні даних локації!");
-                    console.error(err);
-                }
-            });
-        }
-
-        // === Автоматичне зникнення повідомлень ===
-        const alerts = document.querySelectorAll('.msg, .alert, .message');
-        alerts.forEach(alert => {
-            setTimeout(() => alert.classList.add('fade-out'), 3000);
-            setTimeout(() => alert.remove(), 4000);
-        });
-
-        // === Очищення URL від параметрів ===
-        if (window.location.search) {
-            const url = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, url);
-        }
-    });
-</script>
-
 </body>
 </html>

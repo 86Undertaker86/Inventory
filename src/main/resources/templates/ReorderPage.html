@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Мінімальні залишки</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/main.js}"></script>
 </head>
 <body>
 
@@ -11,12 +12,13 @@
 
 <!-- Панель кнопок -->
 <div class="button-bar">
-    <a href="/manager"><button class="first">⬅ Назад</button></a>
+    <a href="/manager"><button class="first">Назад</button></a>
 </div>
 
 <!-- Таблиця -->
 <div class="card">
     <h2>Стан запасів</h2>
+    <input type="text" id="searchInput" class="search-bar" placeholder="Пошук...">
     <table>
         <thead>
         <tr>
@@ -47,16 +49,5 @@
         </tbody>
     </table>
 </div>
-
-<!-- Автоматичне очищення URL -->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        if (window.location.search) {
-            const url = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, url);
-        }
-    });
-</script>
-
 </body>
 </html>
