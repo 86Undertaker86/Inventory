@@ -22,29 +22,40 @@ public class LoginService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Отримати всі ролі (для випадаючого списку на сторінці)
+    /**
+     * Returns all available roles for the dropdown on the login page.
+     */
     public List<RoleUser> getAllRoles() {
         return Arrays.asList(RoleUser.values());
     }
 
-    // Перевірка логіну користувача
+    /**
+     * Validates a user's login request.
+     * Checks:
+     *  1. If the user exists
+     *  2. If the password matches using BCrypt
+     *  3. If the selected role matches the user's role
+     *
+     * Returns a success string if validation passes,
+     * or an error message describing the failure.
+     */
     public String validateLogin(LoginRequest loginRequest) {
         Optional<User> userOpt = userRepository.findByUsername(loginRequest.getUsername());
 
         if (userOpt.isEmpty()) {
-            return "Користувача не знайдено";
+            return "User not found";
         }
 
         User user = userOpt.get();
 
-        // ✅ Перевірка пароля через BCrypt
+        // Check password using BCrypt
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            return "Невірний пароль";
+            return "Invalid password";
         }
 
-        // ✅ Перевірка ролі
+        // Check role
         if (user.getRoleUser() != loginRequest.getRoleUser()) {
-            return "Невірна роль для цього користувача";
+            return "Incorrect role for this user";
         }
 
         return "success";

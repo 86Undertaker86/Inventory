@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/loader")
 public class LoaderController {
 
-    // 📦 Головна сторінка комірника
     @GetMapping
     public String loaderPage() {
         return "LoaderPage";

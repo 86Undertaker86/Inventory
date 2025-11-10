@@ -10,21 +10,29 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class SecurityConfig {
 
-    // ✅ Дає доступ до всіх сторінок без авторизації
+    /**
+     * Configures the Spring Security filter chain.
+     * - Disables CSRF protection (useful for simple form testing)
+     * - Allows all HTTP requests without authentication
+     * - Disables default Spring login and HTTP Basic authentication
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // вимикає CSRF-захист (щоб працювали POST-форми без токена)
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // дозволяє всі запити
+                        .anyRequest().permitAll()
                 )
-                .formLogin(form -> form.disable()) // вимикає стандартну форму логіну Spring
-                .httpBasic(basic -> basic.disable()); // вимикає базову авторизацію
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable());
 
         return http.build();
     }
 
-    // ✅ Підключає BCrypt для хешування паролів
+    /**
+     * Provides a BCrypt password encoder bean.
+     * Used to securely hash user passwords before saving to the database.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/manager")
 public class ManagerController {
 
-    // Головна сторінка менеджера
     @GetMapping
     public String managerPage() {
         return "ManagerPage";

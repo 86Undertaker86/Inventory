@@ -10,19 +10,19 @@
 
 <h1>Керування локаціями</h1>
 
-<!-- 🔹 Кнопки -->
+<!-- Navigation buttons for returning and toggling forms -->
 <div class="button-bar">
     <a href="/manager"><button class="first">Назад</button></a>
     <button id="toggleAddBtn" class="second">Додати локацію</button>
     <button id="toggleEditBtn" class="second">Редагувати локацію</button>
 </div>
 
-<!-- 🔹 Повідомлення -->
+<!-- System messages for CRUD feedback -->
 <div th:if="${param.success}" class="message success">Локацію додано!</div>
 <div th:if="${param.updated}" class="message updated">Локацію оновлено!</div>
 <div th:if="${param.deleted}" class="message deleted">Локацію видалено!</div>
 
-<!-- 🔹 Форма додавання -->
+<!-- Form for adding a new location -->
 <div id="addForm" class="card hidden">
     <h2>Додати локацію</h2>
     <form th:action="@{/manager/locations/add}" th:object="${newLocation}" method="post">
@@ -34,10 +34,11 @@
     </form>
 </div>
 
-<!-- 🔹 Форма редагування -->
+<!-- Form for editing an existing location -->
 <div id="editForm" class="card hidden">
     <h2>Редагувати локацію</h2>
 
+    <!-- Dropdown to select a location to edit -->
     <label for="locationSelect">Оберіть локацію:</label>
     <select id="locationSelect">
         <option value="">— Оберіть зі списку —</option>
@@ -59,10 +60,10 @@
     </form>
 </div>
 
-<!-- 🔹 Таблиця локацій -->
 <div id="locationsTable" class="card">
     <h2>Список локацій</h2>
     <input type="text" id="searchInput" class="search-bar" placeholder="Пошук...">
+
     <table>
         <thead>
         <tr>
@@ -82,15 +83,19 @@
             <td th:text="${l.position}"></td>
             <td th:text="${l.description}"></td>
             <td>
+                <!-- Delete link with confirmation -->
                 <a th:href="@{'/manager/locations/delete/' + ${l.location_id}}"
                    onclick="return confirm('Видалити локацію?');">Видалити</a>
             </td>
         </tr>
+
+        <!-- Fallback row if there are no locations -->
         <tr th:if="${#lists.isEmpty(locations)}">
             <td colspan="6" class="no-data">Даних не знайдено</td>
         </tr>
         </tbody>
     </table>
 </div>
+
 </body>
 </html>

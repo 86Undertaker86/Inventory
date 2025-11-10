@@ -1,9 +1,8 @@
-/* === Японський мінімалізм: стиль для сторінок складу === */
-
+/* --- Root variables --- */
 :root {
     --bg-color: #faf8f6;
     --card-bg: #ffffff;
-    --accent-color: #b22222; /* самурайський червоний */
+    --accent-color: #b22222;
     --accent-hover: #a11d1d;
     --text-color: #2c2c2c;
     --text-light: #6b6b6b;
@@ -16,6 +15,7 @@
     --transition: all 0.3s ease;
 }
 
+/* Body & global font */
 body {
     font-family: "Noto Sans JP", "Segoe UI", sans-serif;
     background-color: var(--bg-color);
@@ -24,13 +24,11 @@ body {
     transition: var(--transition);
 }
 
-/* Центрування основного контенту (крім таблиць) */
+/* --- Container / card centering --- */
 .container {
     max-width: 500px;
-    margin: 0 auto; /* центрує по горизонталі */
+    margin: 0 auto; /* center horizontally */
 }
-
-/* Для карт, форм та повідомлень — вирівнювання всередині */
 .container > .card,
 .container > form,
 .container > .message,
@@ -40,13 +38,10 @@ body {
     margin-right: auto;
 }
 
-/* Таблиці залишаються на всю ширину */
-table {
-    width: 100%;
-}
+/* Tables full width */
+table { width: 100%; }
 
-
-/* Заголовки */
+/* --- Headers --- */
 h1, h2, h3 {
     font-weight: 600;
     color: var(--text-color);
@@ -58,7 +53,7 @@ h1 {
     margin-bottom: 25px;
 }
 
-/* Карти / контейнери */
+/* --- Cards, Forms, Tables --- */
 .card, form, table {
     background: var(--card-bg);
     border-radius: var(--radius);
@@ -67,14 +62,11 @@ h1 {
     margin-bottom: 30px;
     transition: var(--transition);
 }
-
-/* Спокійний ефект при наведенні без зсуву */
 .card:hover, form:hover, table:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    transition: box-shadow 0.3s ease;
 }
 
-/* === Поле пошуку в таблицях === */
+/* --- Search bar --- */
 .search-bar {
     width: 100%;
     padding: 10px 14px;
@@ -83,27 +75,23 @@ h1 {
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     box-sizing: border-box;
-    transition: var(--transition);
     background-color: var(--card-bg);
     color: var(--text-color);
+    transition: var(--transition);
 }
-
 .search-bar:focus {
     border-color: var(--accent-color);
     box-shadow: 0 0 6px rgba(178, 34, 34, 0.25);
     outline: none;
 }
-
 .search-bar::placeholder {
     color: var(--text-light);
     font-style: italic;
 }
 
-/* Таблиці */
-/* === Таблиці === */
+/* --- Tables --- */
 table {
-    width: 100%;
-    border-collapse: separate; /* дозволяє закруглення */
+    border-collapse: separate;
     border-spacing: 0;
     background: var(--card-bg);
     border-radius: var(--radius);
@@ -111,51 +99,33 @@ table {
     overflow: hidden;
     padding: 0;
 }
-
 th, td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
 }
-
 th {
     background-color: #666;
     font-weight: 600;
     color: var(--border-color);
 }
+tr:hover { background-color: #fafafa; }
+tbody tr:last-child td { border-bottom: none; }
 
-/* При наведенні — легкий ефект без зсуву */
-tr:hover {
-    background-color: #fafafa;
-}
+/* Rounded table corners */
+table thead tr:first-child th:first-child { border-top-left-radius: var(--radius); }
+table thead tr:first-child th:last-child { border-top-right-radius: var(--radius); }
+table tbody tr:last-child td:first-child { border-bottom-left-radius: var(--radius); }
+table tbody tr:last-child td:last-child { border-bottom-right-radius: var(--radius); }
 
-/* Прибираємо лінію в останньому рядку */
-tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* Округлення верхніх і нижніх кутів */
-table thead tr:first-child th:first-child {
-    border-top-left-radius: var(--radius);
-}
-table thead tr:first-child th:last-child {
-    border-top-right-radius: var(--radius);
-}
-table tbody tr:last-child td:first-child {
-    border-bottom-left-radius: var(--radius);
-}
-table tbody tr:last-child td:last-child {
-    border-bottom-right-radius: var(--radius);
-}
-
-/* === Підсвічування рядків, де запас нижче мінімального === */
+/* Highlight low-stock rows */
 tr.low-stock td {
-    background-color: #fff4cc !important; /* теплий жовтий */
-    color: #b22222; /* самурайський червоний */
+    background-color: #fff4cc !important; /* warm yellow */
+    color: #b22222; /* samurai red */
     font-weight: 600;
 }
 
-/* Кнопки */
+/* --- Buttons --- */
 button {
     background-color: var(--accent-color);
     color: #fff;
@@ -166,53 +136,28 @@ button {
     cursor: pointer;
     transition: var(--transition);
 }
-button.first {
-    background-color: #666;
-}
-button.second {
-    padding: 11px 18px;
-}
-button:hover {
-    background-color: var(--accent-hover);
-    transform: translateY(-1px);
-}
-button.secondary:hover {
-    background-color: #444;
-}
+button.first { background-color: #666; }
+button.second { padding: 11px 18px; }
+button:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
+button.secondary:hover { background-color: #444; }
 
-/* Верхня панель із кнопками */
-/* === Панель кнопок === */
+/* --- Button bar --- */
 .button-bar {
     display: flex;
-    gap: 12px; /* відстань між кнопками */
+    gap: 12px;
     align-items: center;
     margin-bottom: 20px;
 }
 
-/* === Плавне відкриття форми === */
-.hidden {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-#addForm {
-    animation: slideDown 0.4s ease forwards;
-    transform-origin: top;
-}
-
+/* --- Smooth form reveal --- */
+.hidden { display: none; opacity: 0; transition: opacity 0.3s ease; }
+#addForm { animation: slideDown 0.4s ease forwards; transform-origin: top; }
 @keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* Повідомлення */
+/* --- Messages --- */
 .message {
     display: flex;
     align-items: center;
@@ -225,48 +170,22 @@ button.secondary:hover {
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
 }
-.message.success {
+.message.success, .message.updated, .message.deleted {
     margin: 10px auto 20px auto;
     width: fit-content;
     background-color: #3ba55c;
     color: #fff;
 }
-.message.updated {
-    margin: 10px auto 20px auto;
-    width: fit-content;
-    background-color: #3ba55c;
-    color: #fff;
-}
-.message.deleted {
-    margin: 10px auto 20px auto;
-    width: fit-content;
-    background-color: #3ba55c;
-    color: #fff;
-}
-
 .message.error {
     margin: 10px auto 20px auto;
     width: fit-content;
     background-color: var(--accent-color);
     color: #fff;
 }
+.fade-out { opacity: 0; transform: translateY(-10px); transition: opacity 0.8s ease, transform 0.8s ease; }
 
-/* === Анімація зникнення повідомлень === */
-.fade-out {
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-/* Форми */
-/* === Відступи між елементами форм === */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px; /* відстань між усіма полями та кнопками */
-}
-
-/* М’які переходи при фокусі */
+/* --- Forms --- */
+form { display: flex; flex-direction: column; gap: 12px; }
 input, select, textarea {
     margin: 0;
     padding: 10px 12px;
@@ -276,44 +195,22 @@ input, select, textarea {
     font-size: 15px;
     transition: var(--transition);
 }
-
 input:focus, select:focus, textarea:focus {
     border-color: var(--accent-color);
     box-shadow: 0 0 5px rgba(178, 34, 34, 0.2);
     outline: none;
 }
+form button { margin-top: 10px; align-self: flex-start; }
 
-/* Кнопка відступає зверху */
-form button {
-    margin-top: 10px;
-    align-self: flex-start; /* вирівнює кнопку зліва */
-}
+/* --- Links --- */
+a { text-decoration: none; color: var(--accent-color); transition: var(--transition); }
+a:hover { color: var(--accent-hover); text-decoration: underline; }
 
-/* Посилання */
-a {
-    text-decoration: none;
-    color: var(--accent-color);
-    transition: var(--transition);
-}
-a:hover {
-    color: var(--accent-hover);
-    text-decoration: underline;
-}
+/* --- Divider & empty table --- */
+.divider { margin: 25px 0; border-top: 1px solid var(--border-color); }
+.no-data { text-align: center; color: var(--text-light); font-style: italic; padding: 15px; }
 
-/* Дрібні декоративні деталі */
-.divider {
-    margin: 25px 0;
-    border-top: 1px solid var(--border-color);
-}
-
-.no-data {
-    text-align: center;
-    color: var(--text-light);
-    font-style: italic;
-    padding: 15px;
-}
-
-/* Адаптив */
+/* --- Responsive --- */
 @media (max-width: 768px) {
     body { margin: 15px; }
     table, form, .card { padding: 15px; }

@@ -1,7 +1,6 @@
 package com.CourseWork.Inventory.Controller;
 
 import com.CourseWork.Inventory.Model.Movement;
-import com.CourseWork.Inventory.Service.LoaderService;
 import com.CourseWork.Inventory.Repository.ItemRepository;
 import com.CourseWork.Inventory.Repository.LocationRepository;
 import com.CourseWork.Inventory.Service.MovementService;
@@ -11,23 +10,22 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class MovementController {
-
-    private final LoaderService operatorService;
     private final ItemRepository itemRepo;
     private final LocationRepository locationRepo;
     private final MovementService movementService;
 
-    public MovementController(LoaderService operatorService,
-                              ItemRepository itemRepo,
+    public MovementController(ItemRepository itemRepo,
                               LocationRepository locationRepo,
                               MovementService movementService) {
-        this.operatorService = operatorService;
         this.itemRepo = itemRepo;
         this.locationRepo = locationRepo;
         this.movementService = movementService;
     }
 
-    // 📦 Головна сторінка комірника
+    /**
+     * Displays the movement history page for the manager.
+     * Only shows the list of all recorded movements (no form for adding new ones).
+     */
     @GetMapping("/manager/movements")
     public String showManagerMovements(Model model) {
         model.addAttribute("role", "MANAGER");
@@ -35,6 +33,10 @@ public class MovementController {
         return "MovementPage";
     }
 
+    /**
+     * Displays the movement page for the loader (warehouse operator).
+     * Includes the form for adding a new movement and lists of items and locations.
+     */
     @GetMapping("/loader/movements")
     public String showOperatorMovements(Model model) {
         model.addAttribute("role", "LOADER");
@@ -45,7 +47,16 @@ public class MovementController {
         return "MovementPage";
     }
 
-    // 🔁 Реєстрація руху товару
+    /**
+     * Handles the registration of a new item movement.
+     * Depending on user input, this may represent:
+     * - movement from one location to another,
+     * - adding an item to inventory,
+     * - or removing an item from a location.
+     *
+     * If processing fails (e.g., invalid data or movement logic),
+     * the same page is reloaded with an error message.
+     */
     @PostMapping("/add")
     public String addMovement(@ModelAttribute("movement") Movement movement,
                               @RequestParam("item") Integer itemId,
@@ -54,9 +65,10 @@ public class MovementController {
                               @RequestParam(value = "location", required = false) Integer singleLocationId,
                               Model model) {
         try {
-            operatorService.processMovement(movement, itemId, fromId, toId, singleLocationId);
+            movementService.processMovement(movement, itemId, fromId, toId, singleLocationId);
             return "redirect:/loader?success";
         } catch (IllegalArgumentException e) {
+            // If an error occurs, reload the page with error details
             model.addAttribute("error", e.getMessage());
             model.addAttribute("movement", new Movement());
             model.addAttribute("items", itemRepo.findAll());

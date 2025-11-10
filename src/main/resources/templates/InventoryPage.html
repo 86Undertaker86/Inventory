@@ -9,23 +9,23 @@
 
 <h1>Товари на складі</h1>
 
-<!-- 🔹 Кнопки разом -->
 <div class="button-bar">
-    <!-- Якщо роль MANAGER -->
+    <!-- Show "Back" button if the user has MANAGER role -->
     <a th:if="${role == 'MANAGER'}" href="/manager">
         <button class="first">Назад</button>
     </a>
 
-    <!-- Якщо роль OPERATOR -->
+    <!-- Show "Back" button if the user has LOADER role -->
     <a th:if="${role == 'LOADER'}" href="/loader">
         <button class="first">Назад</button>
     </a>
 </div>
 
-
 <div id="suppliersTable" class="card">
     <h2>Список товарів на складі</h2>
+
     <input type="text" id="searchInput" class="search-bar" placeholder="Пошук...">
+
     <table>
         <thead>
         <tr>
@@ -44,11 +44,14 @@
             <td th:text="${inv.quantity}"></td>
             <td th:text="${#temporals.format(inv.last_update, 'yyyy-MM-dd HH:mm')}"></td>
         </tr>
+
+        <!-- Display message if the inventory list is empty -->
         <tr th:if="${#lists.isEmpty(inventories)}">
             <td colspan="5" class="no-data">Немає даних про залишки</td>
         </tr>
         </tbody>
     </table>
 </div>
+
 </body>
 </html>

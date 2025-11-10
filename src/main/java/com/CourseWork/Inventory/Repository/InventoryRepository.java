@@ -11,9 +11,15 @@ import java.util.Optional;
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, Integer> {
 
-    // 🔹 Шукає конкретний запис для пари товар + локація
+    /**
+     * Finds a specific inventory record for a given item and location pair.
+     * Returns an Optional containing the Inventory if found.
+     */
     Optional<Inventory> findByItemAndLocation(Item item, Location location);
 
-    // 🔹 Шукає будь-який запис, який займає конкретну локацію
+    /**
+     * Finds any inventory record that occupies a specific location.
+     * Returns an Optional containing the Inventory if found.
+     */
     Optional<Inventory> findByLocation(Location location);
 }

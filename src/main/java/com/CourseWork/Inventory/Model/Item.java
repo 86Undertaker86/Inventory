@@ -25,7 +25,6 @@ public class Item {
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
-    // Гетери і сетери
     public Integer getItem_id() { return item_id; }
     public void setItem_id(Integer item_id) { this.item_id = item_id; }
 

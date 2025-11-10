@@ -22,7 +22,6 @@ public class Inventory {
     private int quantity;
     private LocalDateTime last_update = LocalDateTime.now();
 
-    // Гетери і сетери
     public Integer getInventory_id() { return inventory_id; }
     public void setInventory_id(Integer inventory_id) { this.inventory_id = inventory_id; }
 

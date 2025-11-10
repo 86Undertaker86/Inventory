@@ -21,7 +21,6 @@ public class Location {
     @Column(nullable = true)
     private String description;
 
-    // Гетери і сетери
     public Integer getLocation_id() { return location_id; }
     public void setLocation_id(Integer location_id) { this.location_id = location_id; }
 

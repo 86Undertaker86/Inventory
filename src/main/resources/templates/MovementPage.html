@@ -10,23 +10,27 @@
 
 <h1>Рух товарів</h1>
 
-<!-- 🔹 Кнопки управління -->
+<!-- Show "Back" button if the user has LOADER role -->
 <div class="button-bar" th:if="${role == 'LOADER'}">
     <a href="/loader"><button class="first">Назад</button></a>
 </div>
+
+<!-- Show "Back" button if the user has MANAGER role -->
 <div class="button-bar" th:if="${role == 'MANAGER'}">
     <a href="/manager"><button class="first">Назад</button></a>
 </div>
 
-<!-- 🔹 Повідомлення -->
+<!-- Feedback messages (success or error) -->
 <div th:if="${param.success}" class="message success">Рух товару успішно зареєстровано!</div>
 <div th:if="${error}" class="message error">
-       <span th:text="${error}"></span>
+    <span th:text="${error}"></span>
 </div>
 
-<!-- 🔹 Форма руху (лише для оператора) -->
+<!-- Movement registration form (visible only for LOADER role) -->
 <div th:if="${role == 'LOADER'}" id="movementForm" class="card">
     <h2>Зареєструвати рух товару</h2>
+
+    <!-- Form submits new movement record -->
     <form th:action="@{/add}" th:object="${movement}" method="post">
 
         <select th:field="*{item}" required>
@@ -41,14 +45,16 @@
             <option value="TRANSFER">Переміщення</option>
         </select>
 
-        <!-- 🔁 Поля для переміщення -->
+        <!-- Fields shown only for TRANSFER movement type -->
         <div id="transferFields" style="display:none;">
+            <!-- Select origin location -->
             <select name="fromLocation">
                 <option value="">— Оберіть звідки перемістити —</option>
                 <option th:each="loc : ${locations}" th:value="${loc.location_id}"
                         th:text="${loc.rack + '-' + loc.level + '-' + loc.position}"></option>
             </select>
 
+            <!-- Select destination location -->
             <select name="toLocation">
                 <option value="">— Оберіть куди перемістити —</option>
                 <option th:each="loc : ${locations}" th:value="${loc.location_id}"
@@ -56,7 +62,7 @@
             </select>
         </div>
 
-        <!-- 📦 Для IN / OUT -->
+        <!-- Single location used for IN or OUT movement -->
         <div id="singleLocation">
             <select name="location">
                 <option value="">— Оберіть локацію —</option>
@@ -65,16 +71,18 @@
             </select>
         </div>
 
-        <input type="number" th:field="*{quantity}" placeholder="Кількість"  min="1" required>
+        <!-- Quantity input -->
+        <input type="number" th:field="*{quantity}" placeholder="Кількість" min="1" required>
 
         <button type="submit" class="second">Зареєструвати рух</button>
     </form>
 </div>
 
-<!-- 🔹 Таблиця історії рухів -->
 <div class="card">
     <h2>Історія рухів товарів</h2>
+
     <input type="text" id="searchInput" class="search-bar" placeholder="Пошук...">
+
     <table>
         <thead>
         <tr>
@@ -92,14 +100,19 @@
             <td th:text="${m.item.name}"></td>
             <td th:text="${m.quantity}"></td>
             <td th:text="${m.movement_type}"></td>
+
+            <!-- Show location or '-' if null -->
             <td th:text="${m.location != null ? m.location.rack + '-' + m.location.level + '-' + m.location.position : '-'}"></td>
             <td th:text="${#temporals.format(m.date, 'yyyy-MM-dd HH:mm')}"></td>
         </tr>
+
+        <!-- Fallback when there are no movements -->
         <tr th:if="${#lists.isEmpty(movements)}">
             <td colspan="6" class="no-data">Даних не знайдено</td>
         </tr>
         </tbody>
     </table>
 </div>
+
 </body>
 </html>

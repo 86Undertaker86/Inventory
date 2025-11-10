@@ -10,21 +10,21 @@
 
 <h1>Керування користувачами</h1>
 
-<!-- 🔹 Кнопки разом -->
 <div class="button-bar">
     <a href="/admin"><button class="first">Назад</button></a>
     <button id="toggleAddBtn" class="second">Додати користувача</button>
     <button id="toggleEditBtn" class="second">Редагувати користувача</button>
 </div>
 
-<!-- Повідомлення -->
+<!-- Feedback messages displayed after actions -->
 <div th:if="${param.success}" class="message success">Користувача додано!</div>
 <div th:if="${param.updated}" class="message updated">Користувача оновлено!</div>
 <div th:if="${param.deleted}" class="message deleted">Користувача видалено!</div>
 
-<!-- 🔹 Форма додавання -->
+<!-- Add user form (hidden by default, toggled via JS) -->
 <div id="addForm" class="card hidden">
     <h2>Додати користувача</h2>
+    <!-- Form for creating a new user -->
     <form th:action="@{/admin/users/add}" th:object="${newUser}" method="post">
         <input type="text" th:field="*{username}" placeholder="Ім’я користувача" required>
         <input type="password" th:field="*{password}" placeholder="Пароль" required>
@@ -40,11 +40,11 @@
     </form>
 </div>
 
-<!-- 🔹 Форма редагування -->
+<!-- Edit user form (hidden until a user is selected) -->
 <div id="editForm" class="card hidden">
     <h2>Редагувати користувача</h2>
 
-    <!-- Вибір користувача зі списку -->
+    <!-- Dropdown for selecting which user to edit -->
     <label for="userSelect">Оберіть користувача:</label>
     <select id="userSelect">
         <option value="">— Оберіть зі списку —</option>
@@ -53,31 +53,33 @@
                 th:text="${u.username}"></option>
     </select>
 
-    <!-- Форма оновлення (спочатку прихована) -->
-    <!-- Форма оновлення -->
     <form id="userEditForm" class="hidden"
           th:action="@{/admin/users/update/__ID__}"
           th:object="${editUser}" method="post">
 
         <input type="hidden" name="user_id" id="edit_id">
+
         <input type="text" id="edit_username" name="username" placeholder="Ім’я користувача" required>
         <input type="text" id="edit_full_name" name="full_name" placeholder="Повне ім’я">
         <input type="email" id="edit_email" name="email" placeholder="Електронна пошта">
         <input type="password" id="edit_password" name="password" placeholder="Новий пароль (необов’язково)">
+
         <select id="edit_roleUser" name="roleUser" required>
             <option value="">— Оберіть роль —</option>
             <option value="ADMIN">ADMIN</option>
             <option value="MANAGER">MANAGER</option>
             <option value="LOADER">LOADER</option>
         </select>
+
         <button type="submit">Оновити</button>
     </form>
 </div>
 
-<!-- 🔹 Таблиця користувачів -->
 <div id="usersTable" class="card">
     <h2>Список користувачів</h2>
+
     <input type="text" id="searchInput" class="search-bar" placeholder="Пошук...">
+
     <table>
         <thead>
         <tr>
@@ -96,11 +98,15 @@
             <td th:text="${u.full_name}"></td>
             <td th:text="${u.email}"></td>
             <td th:text="${u.roleUser}"></td>
+
+            <!-- Delete action with confirmation dialog -->
             <td>
                 <a th:href="@{'/admin/users/delete/' + ${u.user_id}}"
                    onclick="return confirm('Видалити цього користувача?');">Видалити</a>
             </td>
         </tr>
+
+        <!-- Message shown if no users exist -->
         <tr th:if="${#lists.isEmpty(users)}">
             <td colspan="6" class="no-data">Даних не знайдено</td>
         </tr>

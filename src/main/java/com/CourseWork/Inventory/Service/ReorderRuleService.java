@@ -14,7 +14,6 @@ public class ReorderRuleService {
         this.inventoryRepository = inventoryRepository;
     }
 
-    /** Отримати всі позиції, де кількість менша за мінімальний рівень */
     public List<Inventory> getLowStockInventories() {
         return inventoryRepository.findAll();
     }

@@ -10,19 +10,20 @@
 
 <h1>Керування товарами</h1>
 
-<!-- 🔹 Панель кнопок -->
 <div class="button-bar">
     <a href="/manager"><button class="first">Назад</button></a>
+
+    <!-- Buttons to toggle Add/Edit forms -->
     <button id="toggleAddBtn" class="second">Додати товар</button>
     <button id="toggleEditBtn" class="second">Редагувати товар</button>
 </div>
 
-<!-- 🔹 Повідомлення -->
+<!-- Success / info messages (auto-hidden by JS) -->
 <div th:if="${param.success}" class="message success">Товар успішно додано!</div>
 <div th:if="${param.updated}" class="message updated">Товар оновлено!</div>
 <div th:if="${param.deleted}" class="message deleted">Товар видалено!</div>
 
-<!-- 🔹 Форма додавання -->
+<!-- Add item form (hidden by default, toggled by JS) -->
 <div id="addForm" class="card hidden">
     <h2>Додати товар</h2>
     <form th:action="@{/manager/items/add}" th:object="${newItem}" method="post">
@@ -42,10 +43,11 @@
     </form>
 </div>
 
-<!-- 🔹 Форма редагування -->
+<!-- Edit item form (hidden by default) -->
 <div id="editForm" class="card hidden">
     <h2>Редагувати товар</h2>
 
+    <!-- Dropdown to select item for editing -->
     <label for="itemSelect">Оберіть товар:</label>
     <select id="itemSelect">
         <option value="">— Оберіть зі списку —</option>
@@ -54,6 +56,7 @@
                 th:text="${i.name}"></option>
     </select>
 
+    <!-- Edit form dynamically filled by JS when item selected -->
     <form id="itemEditForm" class="hidden"
           th:action="@{/manager/items/update/__ID__}"
           th:object="${editItem}" method="post">
@@ -71,16 +74,17 @@
         </select>
 
         <input type="number" id="edit_min_level" name="min_level" placeholder="Мінімальний рівень" min="0" required>
-        <input type="number" id="edit_max_level" name="max_level" placeholder="Максимальний рівень" max="0" required>
+        <input type="number" id="edit_max_level" name="max_level" placeholder="Максимальний рівень" min="0" required>
 
         <button type="submit">Оновити</button>
     </form>
 </div>
 
-<!-- 🔹 Таблиця товарів -->
 <div id="itemsTable" class="card">
     <h2>Список товарів</h2>
+
     <input type="text" id="searchInput" class="search-bar" placeholder="Пошук...">
+
     <table>
         <thead>
         <tr>
@@ -101,16 +105,21 @@
             <td th:text="${i.supplier != null ? i.supplier.name_company : '—'}"></td>
             <td th:text="${i.min_level}"></td>
             <td th:text="${i.max_level}"></td>
+
+            <!-- Delete link with confirmation -->
             <td>
                 <a th:href="@{'/manager/items/delete/' + ${i.item_id}}"
                    onclick="return confirm('Видалити товар?');">Видалити</a>
             </td>
         </tr>
+
+        <!-- Message if no items found -->
         <tr th:if="${#lists.isEmpty(items)}">
             <td colspan="7" class="no-data">Даних не знайдено</td>
         </tr>
         </tbody>
     </table>
 </div>
+
 </body>
 </html>

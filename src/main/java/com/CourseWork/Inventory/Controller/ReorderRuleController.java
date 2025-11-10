@@ -16,16 +16,23 @@ public class ReorderRuleController {
         this.reorderRuleService = reorderRuleService;
     }
 
+    /**
+     * Displays the reorder rule page for the manager.
+     * Fetches all inventory items that are below their minimum stock level.
+     */
     @GetMapping()
     public String showReorderRule(Model model) {
         model.addAttribute("reorders", reorderRuleService.getLowStockInventories());
         return "ReorderPage";
     }
 
+    /**
+     * Simulates sending a reorder notification to the supplier.
+     * In a full implementation, this could trigger an email or API request.
+     */
     @GetMapping("/push")
     public String pushReorder() {
-        System.out.println("Повідомлення направлено постачальнику");
-
+        System.out.println("Notification sent to the supplier");
         return "redirect:/manager/reorder?success";
     }
 }

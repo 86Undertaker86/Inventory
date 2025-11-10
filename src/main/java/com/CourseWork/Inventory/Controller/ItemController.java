@@ -19,16 +19,23 @@ public class ItemController {
         this.supplierRepository = supplierRepository;
     }
 
-    // Список товарів
+    /**
+     * Displays the list of all items.
+     * Adds a new empty Item object for the creation form and
+     * loads all suppliers for dropdown selection.
+     */
     @GetMapping
     public String viewItems(Model model) {
         model.addAttribute("items", itemService.getAllItems());
         model.addAttribute("newItem", new Item());
-        model.addAttribute("suppliers", supplierRepository.findAll()); // 👈 додай це
+        model.addAttribute("suppliers", supplierRepository.findAll());
         return "ItemPage";
     }
 
-    // Додавання нового товару
+    /**
+     * Handles the creation of a new item.
+     * Associates the item with a supplier (if provided) and saves it.
+     */
     @PostMapping("/add")
     public String addItem(@ModelAttribute("newItem") Item item,
                           @RequestParam(value = "supplier", required = false) Integer supplierId) {
@@ -39,23 +46,32 @@ public class ItemController {
         return "redirect:/manager/items?success";
     }
 
+    /**
+     * Returns an item by its ID in JSON format (used for AJAX requests).
+     */
     @GetMapping("/get/{id}")
     @ResponseBody
     public Item getItemById(@PathVariable("id") Integer id) {
         return itemService.getItemById(id);
     }
 
-    // Редагування (заповнення форми)
+    /**
+     * Loads the item into the form for editing.
+     * Also adds all items and suppliers for page rendering.
+     */
     @GetMapping("/edit/{id}")
     public String editItem(@PathVariable("id") Integer id, Model model) {
         Item item = itemService.getItemById(id);
         model.addAttribute("editItem", item);
         model.addAttribute("items", itemService.getAllItems());
-        model.addAttribute("suppliers", supplierRepository.findAll()); // Додаємо список постачальників
+        model.addAttribute("suppliers", supplierRepository.findAll());
         return "ItemPage";
     }
 
-    // Збереження змін
+    /**
+     * Saves changes to an existing item.
+     * Updates supplier relation if provided.
+     */
     @PostMapping("/update/{id}")
     public String updateItem(@PathVariable("id") Integer id,
                              @ModelAttribute("editItem") Item updatedItem,
@@ -68,7 +84,9 @@ public class ItemController {
         return "redirect:/manager/items?updated";
     }
 
-    // Видалення товару
+    /**
+     * Deletes an item by its ID.
+     */
     @GetMapping("/delete/{id}")
     public String deleteItem(@PathVariable("id") Integer id) {
         itemService.deleteItem(id);
