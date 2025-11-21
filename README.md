@@ -1,39 +1,61 @@
 # Inventory Management System
 
-Система для управління інвентарем, локаціями, рухами товарів, постачальниками та правилами поповнення. Проєкт створений для спрощення контролю складу та автоматизації базових операцій.
+A comprehensive system for managing items, inventory balances, locations, stock movements, suppliers, and replenishment rules.  
+This project was created to simplify warehouse control and automate essential operations.
 
 ---
 
-## 🚀 Функціонал
+## ⭐ Key Features
 
-* Додавання та редагування **товарів (item)**
-* Управління **залишками на локаціях (inventory)**
-* Переміщення інвентарю між локаціями (**movement**)
-* Налаштування правил поповнення (**reorder_rule**)
-* Робота з постачальниками (**supplier**)
-* Управління локаціями (**location**)
-* Авторизація користувачів (**user**)
-
----
-
-## 🛠️ Стек технологій
-
-* **Backend:** Java (Spring Boot)
-* **Database:** MySQL
-* **Frontend:** HTML / CSS / JavaScript
+* Create and edit **items**
+* Manage **inventory balances across locations**
+* Track **stock movements** between locations
+* Configure **reorder rules**
+* Manage **suppliers**
+* Manage **warehouse locations**
+* **User authentication** and role-based access
 
 ---
 
-## 📁 Структура проєкту
+## 🛠️ Technology Stack
+
+* **Backend:** Java (Spring Boot)  
+* **Database:** MySQL  
+* **Frontend:** HTML / CSS / JavaScript  
+
+---
+
+## 📁 Project Structure
 
 ```
 /Inventory
-│── project/
+│── Inventory/
 │── database/
 │    └── warehouse_inventory.sql
 │── docs/
-│    ├── er-diagram.png
-│    └── use-cases.md
+│    ├── er-diagram
+│    │    ├── ClassDiagram.png
+│    │    ├── ComponentDiagram.png
+│    │    ├── SequenceDiagram-Admin.png
+│    │    ├── SequenceDiagram-Loader.png
+│    │    ├── SequenceDiagram-Manager.png
+│    │    ├── UseCaseDiagram.png
+│    │    ├── UseCaseDiagramforAdministrator
+│    │    ├── UseCaseDiagramforLoader.png
+│    │    └── UseCaseDiagramforManager.png
+│    └── screen-page
+│         ├── AdminPage.png
+│         ├── AdminUsersPage.png
+│         ├── LoaderInventoryPage.png
+│         ├── LoaderMovementsPage.png
+│         ├── LoaderPage.png
+│         ├── LoginPage.png
+│         ├── ManagerInventoryPage.png
+│         ├── ManagerItemsPage.png
+│         ├── ManagerLocationsPage.png
+│         ├── ManagerMovementsPage.png
+│         ├── ManagerReorderPage.png
+│         └── ManagerSuppliersPage.png
 │── .gitignore
 └── README.md
 ```
@@ -75,17 +97,17 @@
 
 ---
 
-## 📦 Встановлення
+## 📦 Installation
 
-### 1. Клонування
+### 1. Clone the repository
 
 ```
 git clone https://github.com/86Undertaker86/Inventory.git
 ```
 
-### 2. Налаштування середовища
+### 2. Configure the environment
 
-Редагування application.properties:
+Edit **application.properties**:
 
 ```
 spring.datasource.url=jdbc:mysql://localhost:3306/warehouse_inventory
@@ -99,16 +121,16 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ```
 
-### 3. Імпорт бази
+### 3. Import the database
 
-* Відкрий **MySQL Workbench / MySQL 8.0 Command Line Client**
-* Імпортуй `warehouse_inventory.sql` із папки `/database`
+1. Open **MySQL Workbench** or **MySQL 8.0 Command Line Client**  
+2. Import `warehouse_inventory.sql` from the `/database` folder
 
 ---
 
-## 🖥️ Запуск застосунку
+## ▶️ Running the Application
 
-Для запуску Spring Boot застосунку:
+Start the Spring Boot project:
 
 ```
 mvn spring-boot:run
@@ -159,12 +181,12 @@ mvn spring-boot:run
 
 ---
 
-## 📜 Ліцензія
+## 📜 License
 
-Проєкт розповсюджується під **MIT License**.
+This project is distributed under the **MIT License**.
 
 ---
 
-## 🙋 Автор
+## 👤 Author
 
-**86Undertaker86** — розробник та автор проєкту.
+**86Undertaker86** — developer and creator of the project.
