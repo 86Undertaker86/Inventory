@@ -4,25 +4,31 @@ import com.CourseWork.Inventory.Model.LoginRequest;
 import com.CourseWork.Inventory.Service.LoginService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-@RequestMapping("/login")
-public class LoginController {
+public class AuthController {
 
     private final LoginService loginService;
 
-    public LoginController(LoginService loginService) {
+    public AuthController(LoginService loginService) {
         this.loginService = loginService;
     }
 
     /**
      * Displays the login page and initializes an empty LoginRequest object.
      */
-    @GetMapping
+    @GetMapping("/login")
     public String loginPage(Model model) {
         model.addAttribute("loginRequest", new LoginRequest());
         return "LoginPage";
+    }
+
+    @GetMapping("/logout")
+    public String BackToLoginPage() {
+        return "redirect:/login";
     }
 
     /**
@@ -31,7 +37,7 @@ public class LoginController {
      * based on their role (ADMIN, MANAGER, or LOADER).
      * If validation fails, returns to the login page with an error message.
      */
-    @PostMapping
+    @PostMapping("/login")
     public String processLogin(@ModelAttribute("loginRequest") LoginRequest loginRequest, Model model) {
         String result = loginService.validateLogin(loginRequest);
 
