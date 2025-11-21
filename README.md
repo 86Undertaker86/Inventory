@@ -42,10 +42,36 @@
 
 ## 🧩 ER-діаграми
 
-Діаграми знаходяться у папці **/docs**. Вони включають:
+## Use Case Diagrams
+![Use Case Diagram](docs/er-diagram/UseCaseDiagram.png)
 
-* ER-модель бази даних
-* UML діаграми (якщо є)
+### Administrator
+![Use Case Diagram For Administrator](docs/er-diagram/UseCaseDiagramforAdministrator.png)
+
+### Loader
+![Use Case Diagram For Loader](docs/er-diagram/UseCaseDiagramforLoader.png)
+
+### Manager
+![Use Case Diagram For Manager](docs/er-diagram/UseCaseDiagramforManager.png)
+
+---
+
+## Class Diagram
+![Class Diagram](docs/er-diagram/ClassDiagram.png)
+
+## Component Diagram
+![Component Diagram](docs/er-diagram/ComponentDiagram.png)
+
+## Sequence Diagrams
+
+### Admin
+![Sequence Diagram - Admin](docs/er-diagram/SequenceDiagram-Admin.png)
+
+### Loader
+![Sequence Diagram - Loader](docs/er-diagram/SequenceDiagram-Loader.png)
+
+### Manager
+![Sequence Diagram - Manager](docs/er-diagram/SequenceDiagram-Manager.png)
 
 ---
 
