@@ -56,7 +56,9 @@ This project was created to simplify warehouse control and automate essential op
 │         ├── ManagerMovementsPage.png
 │         ├── ManagerReorderPage.png
 │         └── ManagerSuppliersPage.png
+│── .gitattributes
 │── .gitignore
+│── LICENSE
 └── README.md
 ```
 
