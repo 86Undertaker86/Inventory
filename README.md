@@ -118,12 +118,44 @@ mvn spring-boot:run
 
 ## 📸 Скриншоти
 
-*(Встав картинки після додавання)*
+## Login Page
+![Login Page](docs/screen-page/LoginPage.png)
 
-```
-![Dashboard](docs/screens/dashboard.png)
-![Inventory](docs/screens/inventory.png)
-```
+## Admin Page
+![Admin Page](docs/screen-page/AdminPage.png)
+
+### Admin Users Page
+![Admin Users Page](docs/screen-page/AdminUsersPage.png)
+
+## Manager Page
+![Manager Page](docs/screen-page/ManagerPage.png)
+
+### Manager Items Page
+![Manager Items Page](docs/screen-page/ManagerItemsPage.png)
+
+### Manager Locations Page
+![Manager Locations Page](docs/screen-page/ManagerLocationsPage.png)
+
+### Manager Reorder Page
+![Manager Reorder Page](docs/screen-page/ManagerReorderPage.png)
+
+### Manager Suppliers Page
+![Manager Suppliers Page](docs/screen-page/ManagerSuppliersPage.png)
+
+### Manager Inventory Page
+![Manager Inventory Page](docs/screen-page/ManagerInventoryPage.png)
+
+### Manager Movements Page
+![Manager Movements Page](docs/screen-page/ManagerMovementsPage.png)
+
+## Loader Page
+![Loader Page](docs/screen-page/LoaderPage.png)
+
+### Loader Inventory Page
+![Loader Inventory Page](docs/screen-page/LoaderInventoryPage.png)
+
+### Loader Movements Page
+![Loader Movements Page](docs/screen-page/LoaderMovementsPage.png)
 
 ---
 
