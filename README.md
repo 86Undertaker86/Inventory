@@ -191,4 +191,4 @@ This project is distributed under the **MIT License**.
 
 ## 👤 Author
 
-**86Undertaker86** — developer and creator of the project.
+**Danil <86Undertaker86> Sidorchuk** — developer and creator of the project.
