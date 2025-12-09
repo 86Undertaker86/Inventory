@@ -69,15 +69,6 @@ This project was created to simplify warehouse control and automate essential op
 ## Use Case Diagrams
 ![Use Case Diagram](docs/er-diagram/UseCaseDiagram.png)
 
-### Administrator
-![Use Case Diagram For Administrator](docs/er-diagram/UseCaseDiagramforAdministrator.png)
-
-### Loader
-![Use Case Diagram For Loader](docs/er-diagram/UseCaseDiagramforLoader.png)
-
-### Manager
-![Use Case Diagram For Manager](docs/er-diagram/UseCaseDiagramforManager.png)
-
 ---
 
 ## Class Diagram
