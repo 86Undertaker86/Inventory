@@ -39,10 +39,7 @@ This project was created to simplify warehouse control and automate essential op
 │    │    ├── SequenceDiagram-Admin.png
 │    │    ├── SequenceDiagram-Loader.png
 │    │    ├── SequenceDiagram-Manager.png
-│    │    ├── UseCaseDiagram.png
-│    │    ├── UseCaseDiagramforAdministrator
-│    │    ├── UseCaseDiagramforLoader.png
-│    │    └── UseCaseDiagramforManager.png
+│    │    └── UseCaseDiagram.png
 │    └── screen-page
 │         ├── AdminPage.png
 │         ├── AdminUsersPage.png
